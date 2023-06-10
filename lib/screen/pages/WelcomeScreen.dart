@@ -137,7 +137,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                                   const Color.fromARGB(255, 78, 134, 255),
                               elevation: 4,
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 65, vertical: 12),
+                                  horizontal: 82, vertical: 12),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),
@@ -232,7 +232,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                                   const Color.fromARGB(255, 78, 134, 255),
                               elevation: 4,
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 65, vertical: 12),
+                                  horizontal: 82, vertical: 12),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),
