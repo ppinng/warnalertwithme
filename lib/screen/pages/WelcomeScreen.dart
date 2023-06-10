@@ -19,24 +19,28 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: _currentPageIndex > 0
-            ? IconButton(
-                icon: const Icon(
-                  Icons.arrow_back_ios_new_rounded,
-                  // shadows: [],
-                  color: Colors.black,
+            ? InkWell(
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.arrow_back_ios_new_rounded,
+                    // shadows: [],
+                    color: Colors.black,
+                  ),
+                  // highlightColor: Color.fromARGB(255, 255, 255, 255),
+                  onPressed: () {
+                    _pageController.previousPage(
+                      duration: const Duration(milliseconds: 200),
+                      curve: Curves.easeInOut,
+                    );
+                  },
                 ),
-                // highlightColor: Color.fromARGB(255, 255, 255, 255),
-                onPressed: () {
-                  _pageController.previousPage(
-                    duration: const Duration(milliseconds: 200),
-                    curve: Curves.easeInOut,
-                  );
-                },
               )
             : null,
         actions: [
           if (_currentPageIndex < 2)
             InkWell(
+              borderRadius: BorderRadius.circular(25.0),
+              highlightColor: Colors.transparent,
               onTap: () {
                 _pageController.animateToPage(
                   2,
@@ -44,18 +48,28 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   curve: Curves.easeInOut,
                 );
               },
-              child: const TextButton(
-                onPressed: null,
-                child: Text(
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 15.0, vertical: 15.0),
+                decoration: BoxDecoration(
+                  color: Colors.transparent,
+                  borderRadius: BorderRadius.circular(40.0),
+                  border: Border.all(
+                    color: Colors.transparent,
+                    width: 1.0,
+                  ),
+                ),
+                child: const Text(
                   'Skip',
                   style: TextStyle(
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.w600,
-                      fontFamily: 'IBM Plex Sans',
-                      color: Colors.black),
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'IBM Plex Sans',
+                    color: Colors.black,
+                  ),
                 ),
               ),
-            ),
+            )
         ],
       ),
       body: Stack(
@@ -137,7 +151,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                                   const Color.fromARGB(255, 78, 134, 255),
                               elevation: 4,
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 82, vertical: 12),
+                                  horizontal: 65, vertical: 12),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),
@@ -232,7 +246,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                                   const Color.fromARGB(255, 78, 134, 255),
                               elevation: 4,
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 82, vertical: 12),
+                                  horizontal: 65, vertical: 12),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),
