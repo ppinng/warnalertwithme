@@ -38,9 +38,9 @@ class LoginPage extends StatelessWidget {
                       height: 200,
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 7),
-                    child: const Text(
+                  const Padding(
+                    padding: EdgeInsets.only(top: 7),
+                    child: Text(
                       'WarnAlert',
                       style: TextStyle(
                         fontSize: 28,
@@ -48,9 +48,9 @@ class LoginPage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 6),
-                    child: const Text(
+                  const Padding(
+                    padding: EdgeInsets.only(top: 6),
+                    child: Text(
                       'Please sign in to continue',
                       style: TextStyle(fontSize: 16, color: kFontGrey1),
                     ),
@@ -63,8 +63,8 @@ class LoginPage extends StatelessWidget {
                       decoration: blueBoxDecoration,
                       child: Row(
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8),
+                          const Padding(
+                            padding: EdgeInsets.all(8),
                             child: Icon(
                               Icons.person,
                               color: kFontGrey3,
@@ -89,8 +89,8 @@ class LoginPage extends StatelessWidget {
                       decoration: blueBoxDecoration,
                       child: Row(
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8),
+                          const Padding(
+                            padding: EdgeInsets.all(8),
                             child: Icon(
                               Icons.key,
                               color: kFontGrey3,
@@ -156,36 +156,34 @@ class LoginPage extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.only(bottom: 0),
-              child: Container(
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: RichText(
-                    text: TextSpan(
-                      text: 'Don\'t have an account? ',
-                      style: const TextStyle(
-                        fontSize: 13,
-                        color: kFontGrey1,
-                      ),
-                      children: <TextSpan>[
-                        TextSpan(
-                          text: 'Sign up',
-                          style: const TextStyle(
-                            fontSize: 13,
-                            color: Colors.blue,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => RegisterPage(),
-                                ),
-                              );
-                            },
-                        ),
-                      ],
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: RichText(
+                  text: TextSpan(
+                    text: 'Don\'t have an account? ',
+                    style: const TextStyle(
+                      fontSize: 13,
+                      color: kFontGrey1,
                     ),
+                    children: <TextSpan>[
+                      TextSpan(
+                        text: 'Sign up',
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: Colors.blue,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => RegisterPage(),
+                              ),
+                            );
+                          },
+                      ),
+                    ],
                   ),
                 ),
               ),
