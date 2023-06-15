@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 const kTextField = Color(0xFFE0F4FF);
 
 const kButtonColorBlue = Color(0xFF4D8CFE);
+const kButtonColorLightBlue = Color(0xFFE0F4FF);
 const kButtonColorRed = Color(0xFFFF0000);
 
 const kFontBlue = Color(0xFF4D8CFE);
