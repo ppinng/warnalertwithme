@@ -120,7 +120,7 @@ class LoginPage extends StatelessWidget {
                           'Reset password?',
                           style: TextStyle(
                             color: kFontGrey1,
-                            fontSize: 13,
+                            fontSize: 12,
                             decoration: TextDecoration.underline,
                           ),
                         ),
@@ -163,18 +163,16 @@ class LoginPage extends StatelessWidget {
                     text: TextSpan(
                       text: 'Don\'t have an account? ',
                       style: const TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey,
-                        fontStyle: FontStyle.italic,
+                        fontSize: 13,
+                        color: kFontGrey1,
                       ),
                       children: <TextSpan>[
                         TextSpan(
-                          text: 'Register',
+                          text: 'Sign up',
                           style: const TextStyle(
-                            fontSize: 14,
+                            fontSize: 13,
                             color: Colors.blue,
                             fontWeight: FontWeight.bold,
-                            decoration: TextDecoration.underline,
                           ),
                           recognizer: TapGestureRecognizer()
                             ..onTap = () {
