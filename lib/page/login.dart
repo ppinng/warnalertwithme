@@ -21,7 +21,6 @@ class LoginPage extends StatelessWidget {
     );
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Login')),
       body: Container(
         padding: const EdgeInsets.all(28),
         child: Column(
@@ -31,7 +30,7 @@ class LoginPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(top: 40),
+                    padding: const EdgeInsets.only(top: 100),
                     child: Image.asset(
                       'images/Logo.png',
                       width: 200,
