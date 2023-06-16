@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:warnalertwithme/constant.dart';
+import 'package:warnalertwithme/page/WelcomeScreenTest.dart';
 import 'package:warnalertwithme/page/register.dart';
 import 'package:warnalertwithme/page/resetpassword.dart';
-//import 'package:warnalertwithme/page/home_screen.dart';
 
 class LoginPage extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     final blueBoxDecoration = BoxDecoration(
@@ -113,14 +112,16 @@ class LoginPage extends StatelessWidget {
                   Align(
                     alignment: Alignment.centerRight,
                     child: Padding(
-                      padding: const EdgeInsets.only(top: 5, bottom: 15, right: 20), // Adjust the padding here
+                      padding: const EdgeInsets.only(
+                          top: 5,
+                          bottom: 15,
+                          right: 20), // Adjust the padding here
                       child: GestureDetector(
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => ResetPasswordPage(),
-                              
                             ),
                           );
                         },
@@ -138,36 +139,34 @@ class LoginPage extends StatelessWidget {
                   SizedBox(
                     height: 50,
                     width: 130,
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => RegisterPage(),
-                            //actually have to link to homescreenpage
+                    child: Builder(
+                      builder: (context) {
+                        return ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => WelcomeScreen(),
+                              ),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            backgroundColor:
+                                kButtonColorBlue, // Set the button's background color
+                          ),
+                          child: const Text(
+                            'Login',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
                           ),
                         );
                       },
-                      child: ElevatedButton(
-                        onPressed: () {
-                          // TODO: Implement login functionality
-                        },
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          backgroundColor:
-                              kButtonColorBlue, // Set the button's background color
-                        ),
-                        child: const Text(
-                          'Login',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
                     ),
                   ),
                 ],
