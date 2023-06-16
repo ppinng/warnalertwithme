@@ -34,7 +34,7 @@ class RegisterPage extends StatelessWidget {
                 Navigator.pop(context);
               },
               child: const Icon(
-                Icons.arrow_back,
+                Icons.arrow_back_ios_new,
                 color: Colors.black,
               ),
             ),
