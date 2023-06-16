@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:warnalertwithme/constant.dart';
+import 'package:warnalertwithme/page/createpassword.dart';
+import 'package:warnalertwithme/page/login.dart';
 
 class ResetPasswordPage extends StatelessWidget {
   @override
@@ -23,7 +25,7 @@ class ResetPasswordPage extends StatelessWidget {
       body: Column(
         children: [
           Container(
-            padding: const EdgeInsets.only(top: 40, left: 10),
+            padding: const EdgeInsets.only(top: 40, left: 20),
             alignment: Alignment.topLeft,
             child: GestureDetector(
               onTap: () {
@@ -36,166 +38,97 @@ class ResetPasswordPage extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
-                  'Reset Password',
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const Padding(
-                  padding: EdgeInsets.only(top: 6),
-                  child: Text(
-                    'Fill in an Email to reset password',
-                    style: TextStyle(fontSize: 16, color: kFontGrey1),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 25),
-                  child: Container(
-                    width: 291,
-                    height: 55,
-                    decoration: blueBoxDecoration,
-                    child: Row(
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.all(8),
-                          child: Icon(
-                            Icons.person,
-                            color: kFontGrey3,
-                          ),
-                        ),
-                        Expanded(
-                          child: TextField(
-                            decoration: customInputDecoration.copyWith(
-                              hintText: 'Username',
-                            ),
-                          ),
-                        ),
-                      ],
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 100, horizontal: 20),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Reset Password',
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 20),
-                  child: Container(
-                    width: 291,
-                    height: 55,
-                    decoration: blueBoxDecoration,
-                    child: Row(
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.all(8),
-                          child: Icon(
-                            Icons.email,
-                            color: kFontGrey3,
-                          ),
-                        ),
-                        Expanded(
-                          child: TextField(
-                            obscureText: true,
-                            decoration: customInputDecoration.copyWith(
-                              hintText: 'E-mail',
-                            ),
-                          ),
-                        ),
-                      ],
+                  const Padding(
+                    padding: EdgeInsets.only(top: 6),
+                    child: Text(
+                      'Fill in an Email to reset password',
+                      style: TextStyle(fontSize: 16, color: kFontGrey1),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 20),
-                  child: Container(
-                    width: 291,
-                    height: 55,
-                    decoration: blueBoxDecoration,
-                    child: Row(
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.all(8),
-                          child: Icon(
-                            Icons.key,
-                            color: kFontGrey3,
-                          ),
-                        ),
-                        Expanded(
-                          child: TextField(
-                            obscureText: true,
-                            decoration: customInputDecoration.copyWith(
-                              hintText: 'Password',
+                  Padding(
+                    padding: const EdgeInsets.only(top: 30, bottom: 30),
+                    child: Container(
+                      width: 291,
+                      height: 55,
+                      decoration: blueBoxDecoration,
+                      child: Row(
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.all(8),
+                            child: Icon(
+                              Icons.email,
+                              color: kFontGrey3,
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 20),
-                  child: Container(
-                    width: 291,
-                    height: 55,
-                    decoration: blueBoxDecoration,
-                    child: Row(
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.all(8),
-                          child: Icon(
-                            Icons.key,
-                            color: kFontGrey3,
-                          ),
-                        ),
-                        Expanded(
-                          child: TextField(
-                            obscureText: true,
-                            decoration: customInputDecoration.copyWith(
-                              hintText: 'Confirm Password',
+                          Expanded(
+                            child: TextField(
+                              obscureText: true,
+                              decoration: customInputDecoration.copyWith(
+                                hintText: 'E-mail',
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(30.0),
-                  child: Container(
+                  SizedBox(
                     height: 50,
                     width: 130,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        // TODO: Implement login functionality
+                    child: Builder(
+                      builder: (context) {
+                        return ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => CreatePasswordPage(),
+                              ),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            backgroundColor:
+                                kButtonColorBlue, // Set the button's background color
+                          ),
+                          child: const Text(
+                            'Next',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        );
                       },
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        backgroundColor: kButtonColorBlue,
-                      ),
-                      child: const Text(
-                        'Register',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(30),
+            padding: const EdgeInsets.all(30.0),
             child: Align(
               alignment: Alignment.bottomCenter,
               child: RichText(
                 text: TextSpan(
-                  text: 'Already have an account? ',
+                  text: 'Don\'t have an account? ',
                   style: const TextStyle(
                     fontSize: 13,
                     color: kFontGrey1,
@@ -210,7 +143,12 @@ class ResetPasswordPage extends StatelessWidget {
                       ),
                       recognizer: TapGestureRecognizer()
                         ..onTap = () {
-                          // TODO: Implement sign-in navigation
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => LoginPage(),
+                            ),
+                          );
                         },
                     ),
                   ],
