@@ -150,40 +150,40 @@ class CreatePasswordPage extends StatelessWidget {
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(30.0),
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: RichText(
-                text: TextSpan(
-                  text: 'Don\'t have an account? ',
-                  style: const TextStyle(
-                    fontSize: 13,
-                    color: kFontGrey1,
-                  ),
-                  children: <TextSpan>[
-                    TextSpan(
-                      text: 'Sign in',
-                      style: const TextStyle(
-                        fontSize: 13,
-                        color: Colors.blue,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => LoginPage(),
-                            ),
-                          );
-                        },
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
+          // Padding(
+          //   padding: const EdgeInsets.all(30.0),
+          //   child: Align(
+          //     alignment: Alignment.bottomCenter,
+          //     child: RichText(
+          //       text: TextSpan(
+          //         text: 'Don\'t have an account? ',
+          //         style: const TextStyle(
+          //           fontSize: 13,
+          //           color: kFontGrey1,
+          //         ),
+          //         children: <TextSpan>[
+          //           TextSpan(
+          //             text: 'Sign in',
+          //             style: const TextStyle(
+          //               fontSize: 13,
+          //               color: Colors.blue,
+          //               fontWeight: FontWeight.bold,
+          //             ),
+          //             recognizer: TapGestureRecognizer()
+          //               ..onTap = () {
+          //                 Navigator.push(
+          //                   context,
+          //                   MaterialPageRoute(
+          //                     builder: (context) => LoginPage(),
+          //                   ),
+          //                 );
+          //               },
+          //           ),
+          //         ],
+          //       ),
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );
