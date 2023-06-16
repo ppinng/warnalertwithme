@@ -37,168 +37,171 @@ class RegisterPage extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
-                  'Let’s get started !',
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const Padding(
-                  padding: EdgeInsets.only(top: 6),
-                  child: Text(
-                    'Create an account to avail all the features',
-                    style: TextStyle(fontSize: 16, color: kFontGrey1),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 25),
-                  child: Container(
-                    width: 291,
-                    height: 55,
-                    decoration: blueBoxDecoration,
-                    child: Row(
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.all(8),
-                          child: Icon(
-                            Icons.person,
-                            color: kFontGrey3,
-                          ),
-                        ),
-                        Expanded(
-                          child: TextField(
-                            decoration: customInputDecoration.copyWith(
-                              hintText: 'Username',
-                            ),
-                          ),
-                        ),
-                      ],
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 50, horizontal: 20),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    'Let’s get started !',
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 20),
-                  child: Container(
-                    width: 291,
-                    height: 55,
-                    decoration: blueBoxDecoration,
-                    child: Row(
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.all(8),
-                          child: Icon(
-                            Icons.email,
-                            color: kFontGrey3,
-                          ),
-                        ),
-                        Expanded(
-                          child: TextField(
-                            obscureText: true,
-                            decoration: customInputDecoration.copyWith(
-                              hintText: 'E-mail',
-                            ),
-                          ),
-                        ),
-                      ],
+                  const Padding(
+                    padding: EdgeInsets.only(top: 6),
+                    child: Text(
+                      'Create an account to avail all the features',
+                      style: TextStyle(fontSize: 16, color: kFontGrey1),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 20),
-                  child: Container(
-                    width: 291,
-                    height: 55,
-                    decoration: blueBoxDecoration,
-                    child: Row(
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.all(8),
-                          child: Icon(
-                            Icons.key,
-                            color: kFontGrey3,
-                          ),
-                        ),
-                        Expanded(
-                          child: TextField(
-                            obscureText: true,
-                            decoration: customInputDecoration.copyWith(
-                              hintText: 'Password',
+                  Padding(
+                    padding: const EdgeInsets.only(top: 25),
+                    child: Container(
+                      width: 291,
+                      height: 55,
+                      decoration: blueBoxDecoration,
+                      child: Row(
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.all(8),
+                            child: Icon(
+                              Icons.person,
+                              color: kFontGrey3,
                             ),
                           ),
-                        ),
-                      ],
+                          Expanded(
+                            child: TextField(
+                              decoration: customInputDecoration.copyWith(
+                                hintText: 'Username',
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 20, bottom: 20),
-                  child: Container(
-                    width: 291,
-                    height: 55,
-                    decoration: blueBoxDecoration,
-                    child: Row(
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.all(8),
-                          child: Icon(
-                            Icons.key,
-                            color: kFontGrey3,
-                          ),
-                        ),
-                        Expanded(
-                          child: TextField(
-                            obscureText: true,
-                            decoration: customInputDecoration.copyWith(
-                              hintText: 'Confirm Password',
+                  Padding(
+                    padding: const EdgeInsets.only(top: 20),
+                    child: Container(
+                      width: 291,
+                      height: 55,
+                      decoration: blueBoxDecoration,
+                      child: Row(
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.all(8),
+                            child: Icon(
+                              Icons.email,
+                              color: kFontGrey3,
                             ),
                           ),
-                        ),
-                      ],
+                          Expanded(
+                            child: TextField(
+                              obscureText: true,
+                              decoration: customInputDecoration.copyWith(
+                                hintText: 'E-mail',
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(
-                  height: 50,
-                  width: 130,
-                  child: Builder(
-                    builder: (context) {
-                      return ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => LoginPage(),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 20),
+                    child: Container(
+                      width: 291,
+                      height: 55,
+                      decoration: blueBoxDecoration,
+                      child: Row(
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.all(8),
+                            child: Icon(
+                              Icons.key,
+                              color: kFontGrey3,
                             ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
                           ),
-                          backgroundColor:
-                              kButtonColorBlue, // Set the button's background color
-                        ),
-                        child: const Text(
-                          'Register',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                          Expanded(
+                            child: TextField(
+                              obscureText: true,
+                              decoration: customInputDecoration.copyWith(
+                                hintText: 'Password',
+                              ),
+                            ),
                           ),
-                        ),
-                      );
-                    },
+                        ],
+                      ),
+                    ),
                   ),
-                ),
-              ],
+                  Padding(
+                    padding: const EdgeInsets.only(top: 20, bottom: 30),
+                    child: Container(
+                      width: 291,
+                      height: 55,
+                      decoration: blueBoxDecoration,
+                      child: Row(
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.all(8),
+                            child: Icon(
+                              Icons.key,
+                              color: kFontGrey3,
+                            ),
+                          ),
+                          Expanded(
+                            child: TextField(
+                              obscureText: true,
+                              decoration: customInputDecoration.copyWith(
+                                hintText: 'Confirm Password',
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 50,
+                    width: 130,
+                    child: Builder(
+                      builder: (context) {
+                        return ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => LoginPage(),
+                              ),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            backgroundColor:
+                                kButtonColorBlue, // Set the button's background color
+                          ),
+                          child: const Text(
+                            'Register',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(20.0),
+            padding: const EdgeInsets.all(30.0),
             child: Align(
               alignment: Alignment.bottomCenter,
               child: RichText(
