@@ -1,6 +1,9 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:warnalertwithme/constant.dart';
+import 'package:warnalertwithme/page/WelcomeScreenTest.dart';
 import 'package:warnalertwithme/page/login.dart';
 
 class RegisterPage extends StatelessWidget {
@@ -206,7 +209,7 @@ class RegisterPage extends StatelessWidget {
               alignment: Alignment.bottomCenter,
               child: RichText(
                 text: TextSpan(
-                  text: 'Don\'t have an account? ',
+                  text: 'Already have an account? ',
                   style: const TextStyle(
                     fontSize: 13,
                     color: kFontGrey1,
