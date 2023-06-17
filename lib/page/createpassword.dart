@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/gestures.dart';
 import 'package:warnalertwithme/constant.dart';
 import 'package:warnalertwithme/page/login.dart';
 
 class CreatePasswordPage extends StatelessWidget {
+  const CreatePasswordPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     final blueBoxDecoration = BoxDecoration(
@@ -123,7 +124,7 @@ class CreatePasswordPage extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => LoginPage(),
+                                builder: (context) => const LoginPage(),
                               ),
                             );
                           },
@@ -135,7 +136,7 @@ class CreatePasswordPage extends StatelessWidget {
                                 kButtonColorBlue, // Set the button's background color
                           ),
                           child: const Text(
-                            'Register',
+                            'Confirm',
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,

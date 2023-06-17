@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:warnalertwithme/constant.dart';
-import 'package:warnalertwithme/page/WelcomeScreenTest.dart';
+import 'package:warnalertwithme/screen/pages/gMap.dart';
 import 'package:warnalertwithme/page/register.dart';
 import 'package:warnalertwithme/page/resetpassword.dart';
 
 class LoginPage extends StatelessWidget {
+  const LoginPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     final blueBoxDecoration = BoxDecoration(
@@ -121,7 +123,7 @@ class LoginPage extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => ResetPasswordPage(),
+                              builder: (context) => const ResetPasswordPage(),
                             ),
                           );
                         },
@@ -146,7 +148,7 @@ class LoginPage extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => WelcomeScreen(),
+                                builder: (context) => const MapScreen(),
                               ),
                             );
                           },
@@ -196,7 +198,7 @@ class LoginPage extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => RegisterPage(),
+                                builder: (context) => const RegisterPage(),
                               ),
                             );
                           },

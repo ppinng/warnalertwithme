@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/gestures.dart';
 import 'package:warnalertwithme/constant.dart';
 import 'package:warnalertwithme/page/createpassword.dart';
-import 'package:warnalertwithme/page/login.dart';
 
 class ResetPasswordPage extends StatelessWidget {
+  const ResetPasswordPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     final blueBoxDecoration = BoxDecoration(
@@ -95,7 +95,8 @@ class ResetPasswordPage extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => CreatePasswordPage(),
+                                builder: (context) =>
+                                    const CreatePasswordPage(),
                               ),
                             );
                           },
