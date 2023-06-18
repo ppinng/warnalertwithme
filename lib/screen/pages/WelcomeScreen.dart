@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
+import '../../page/register.dart';
+
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({Key? key}) : super(key: key);
 
@@ -135,8 +137,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     const SizedBox(height: 151.5),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        primary: const Color.fromARGB(255, 78, 134, 255),
-                        onPrimary: Colors.white,
+                        foregroundColor: Colors.white,
+                        backgroundColor:
+                            const Color.fromARGB(255, 78, 134, 255),
                         elevation: 4,
                         padding: const EdgeInsets.symmetric(
                             horizontal: 65, vertical: 12),
@@ -216,8 +219,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     const SizedBox(height: 151.5),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        primary: const Color.fromARGB(255, 78, 134, 255),
-                        onPrimary: Colors.white,
+                        foregroundColor: Colors.white,
+                        backgroundColor:
+                            const Color.fromARGB(255, 78, 134, 255),
                         elevation: 4,
                         padding: const EdgeInsets.symmetric(
                             horizontal: 65, vertical: 12),
@@ -278,8 +282,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     const SizedBox(height: 180.0),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        primary: const Color.fromARGB(255, 78, 134, 255),
-                        onPrimary: Colors.white,
+                        foregroundColor: Colors.white,
+                        backgroundColor:
+                            const Color.fromARGB(255, 78, 134, 255),
                         elevation: 4,
                         padding: const EdgeInsets.symmetric(
                             horizontal: 65, vertical: 12),
@@ -287,7 +292,12 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const RegisterPage()));
+                      },
                       child: const Text(
                         'Get Start',
                         style: TextStyle(
