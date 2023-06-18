@@ -13,7 +13,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   int _currentPageIndex = 0;
 
   @override
-  Widget build(BuildContext context) {  
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -86,9 +86,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 child: Column(
                   children: [
                     const SizedBox(height: 50.0),
-                    Image.asset(
+                    _buildImageWithLoadingIndicator(
                       'assets/images/logo_map.png',
-                      alignment: Alignment.topCenter,
                       width: 400.0,
                     ),
                     const SizedBox(height: 60.0),
@@ -168,9 +167,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 child: Column(
                   children: [
                     const SizedBox(height: 50.0),
-                    Image.asset(
+                    _buildImageWithLoadingIndicator(
                       'assets/images/logo_phone.png',
-                      alignment: Alignment.topCenter,
                       width: 400.0,
                     ),
                     const SizedBox(height: 60.0),
@@ -251,9 +249,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 child: Column(
                   children: [
                     const SizedBox(height: 35.0),
-                    Image.asset(
+                    _buildImageWithLoadingIndicator(
                       'assets/images/logo_heart.png',
-                      alignment: Alignment.topCenter,
                       width: 400.0,
                     ),
                     const SizedBox(height: 80.0),
@@ -326,6 +323,37 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildImageWithLoadingIndicator(
+    String imagePath, {
+    double width = 200.0,
+  }) {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Image.asset(
+          imagePath,
+          width: width,
+        ),
+        FutureBuilder(
+          future: precacheImage(AssetImage(imagePath), context),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const CircularProgressIndicator();
+            } else if (snapshot.hasError) {
+              return Icon(
+                Icons.error_rounded,
+                color: Colors.blue,
+                size: width / 2,
+              );
+            } else {
+              return const SizedBox.shrink();
+            }
+          },
+        ),
+      ],
     );
   }
 }
