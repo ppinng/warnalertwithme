@@ -206,6 +206,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         Expanded(
                           child: TextField(
                             controller: _passController,
+                            obscureText: true,
                             decoration: customInputDecoration.copyWith(
                               hintText: 'Password',
                               errorStyle: const TextStyle(color: Colors.red),
