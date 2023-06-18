@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:warnalertwithme/component/menu_bar.dart';
-import 'package:warnalertwithme/page/gMap.dart';
+import 'package:warnalertwithme/screen/pages/gMap.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

@@ -70,9 +70,8 @@ flutter:
     - assets/images/logo_phonee.svg
     - assets/images/logo_heartt.svg
     - images/Logo.png
-  #   - images/a_dot_ham.jpeg
-  assets:
     - images/randomppl.png
+  #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
