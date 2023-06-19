@@ -1,12 +1,83 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:warnalertwithme/constant.dart';
-import 'package:warnalertwithme/screen/pages/gMap.dart';
 import 'package:warnalertwithme/page/register.dart';
 import 'package:warnalertwithme/page/resetpassword.dart';
 
-class LoginPage extends StatelessWidget {
-  const LoginPage({Key? key});
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+import 'package:warnalertwithme/screen/pages/gMap.dart';
+
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passController = TextEditingController();
+  bool _isNotValidate = false;
+  late SharedPreferences prefs;
+
+  @override
+  void initState() {
+    super.initState();
+    initSharedPref();
+  }
+
+  void initSharedPref() async {
+    prefs = await SharedPreferences.getInstance();
+  }
+
+  void loginUser() async {
+    if (_usernameController.text.isNotEmpty &&
+        _passController.text.isNotEmpty) {
+      var reqBody = {
+        "username": _usernameController.text,
+        "pass": _passController.text
+      };
+
+      String url = 'http://10.0.2.2:3000/api/auth/login';
+
+      var response = await http.post(
+        Uri.parse(url),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(reqBody),
+      );
+      final BuildContext dialogContext =
+          context; // Store the context in a local variable
+      var jsonResponse = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        var myToken = jsonResponse['token'];
+        prefs.setString('token', myToken);
+        print('Token: $myToken');
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const MapScreen()),
+        );
+      } else {
+        ScaffoldMessenger.of(dialogContext).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Invalid username or password',
+              style: TextStyle(color: Colors.red),
+            ),
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+    } else {
+      setState(() {
+        _isNotValidate = true;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +102,8 @@ class LoginPage extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(28),
             child: Padding(
-              padding: const EdgeInsets.only(top:70, bottom: 90, left: 25, right: 25),
+              padding: const EdgeInsets.only(
+                  top: 70, bottom: 90, left: 25, right: 25),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -75,9 +147,20 @@ class LoginPage extends StatelessWidget {
                           ),
                           Expanded(
                             child: TextField(
+                              controller: _usernameController,
                               decoration: customInputDecoration.copyWith(
                                 hintText: 'Username',
                               ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 5, left: 10),
+                            child: Text(
+                              _isNotValidate
+                                  ? "Please enter your username"
+                                  : "",
+                              style: const TextStyle(
+                                  color: Colors.red, fontSize: 12),
                             ),
                           ),
                         ],
@@ -101,10 +184,21 @@ class LoginPage extends StatelessWidget {
                           ),
                           Expanded(
                             child: TextField(
+                              controller: _passController,
                               obscureText: true,
                               decoration: customInputDecoration.copyWith(
                                 hintText: 'Password',
                               ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 5, left: 10),
+                            child: Text(
+                              _isNotValidate
+                                  ? "Please enter your Password"
+                                  : "",
+                              style: const TextStyle(
+                                  color: Colors.red, fontSize: 12),
                             ),
                           ),
                         ],
@@ -146,12 +240,7 @@ class LoginPage extends StatelessWidget {
                       builder: (context) {
                         return ElevatedButton(
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const MapScreen(),
-                              ),
-                            );
+                            loginUser();
                           },
                           style: ElevatedButton.styleFrom(
                             shape: RoundedRectangleBorder(
@@ -172,45 +261,44 @@ class LoginPage extends StatelessWidget {
                       },
                     ),
                   ),
-                  
                 ],
               ),
             ),
           ),
           Padding(
-                    padding: const EdgeInsets.only(bottom: 0),
-                    child: Align(
-                      alignment: Alignment.bottomCenter,
-                      child: RichText(
-                        text: TextSpan(
-                          text: 'Don\'t have an account? ',
-                          style: const TextStyle(
-                            fontSize: 13,
-                            color: kFontGrey1,
-                          ),
-                          children: <TextSpan>[
-                            TextSpan(
-                              text: 'Sign up',
-                              style: const TextStyle(
-                                fontSize: 13,
-                                color: Colors.blue,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const RegisterPage(),
-                                    ),
-                                  );
-                                },
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+            padding: const EdgeInsets.only(bottom: 0),
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: RichText(
+                text: TextSpan(
+                  text: 'Don\'t have an account? ',
+                  style: const TextStyle(
+                    fontSize: 13,
+                    color: kFontGrey1,
                   ),
+                  children: <TextSpan>[
+                    TextSpan(
+                      text: 'Sign up',
+                      style: const TextStyle(
+                        fontSize: 13,
+                        color: Colors.blue,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const RegisterPage(),
+                            ),
+                          );
+                        },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );

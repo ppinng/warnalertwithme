@@ -19,6 +19,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passController = TextEditingController();
+
   final String _errorMessage = '';
   bool _isNotValidate = false;
   void _registerUser() async {
@@ -56,8 +57,11 @@ class _RegisterPageState extends State<RegisterPage> {
           context: dialogContext, // Use the stored context instead of 'context'
           builder: (context) {
             return AlertDialog(
-              title: const Text('Registration Failed'),
-              content: const Text('An error occurred during registration.'),
+              title: const Text(
+                'Registration Failed',
+                style: TextStyle(color: Colors.red),
+              ),
+              content: const Text('Please check your information'),
               actions: <Widget>[
                 TextButton(
                   child: const Text('OK'),
@@ -161,9 +165,8 @@ class _RegisterPageState extends State<RegisterPage> {
                         padding: const EdgeInsets.only(top: 5, left: 10),
                         child: Text(
                           _isNotValidate ? "Please enter your username" : "",
-                          style: const TextStyle(
-                            color: Colors.red,
-                            fontSize: 12),
+                          style:
+                              const TextStyle(color: Colors.red, fontSize: 12),
                         ),
                       ),
                     ],
@@ -202,9 +205,8 @@ class _RegisterPageState extends State<RegisterPage> {
                         padding: const EdgeInsets.only(top: 5, left: 10),
                         child: Text(
                           _isNotValidate ? "Please enter your Email" : "",
-                          style: const TextStyle(
-                            color: Colors.red,
-                            fontSize: 12),
+                          style:
+                              const TextStyle(color: Colors.red, fontSize: 12),
                         ),
                       ),
                     ],
@@ -243,9 +245,8 @@ class _RegisterPageState extends State<RegisterPage> {
                         padding: const EdgeInsets.only(top: 5, left: 10),
                         child: Text(
                           _isNotValidate ? "Please enter your password" : "",
-                          style: const TextStyle(
-                            color: Colors.red,
-                            fontSize: 12),
+                          style:
+                              const TextStyle(color: Colors.red, fontSize: 12),
                         ),
                       ),
                     ],
