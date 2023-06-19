@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
+import '../../page/register.dart';
+
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({Key? key}) : super(key: key);
 
@@ -23,10 +25,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 child: IconButton(
                   icon: const Icon(
                     Icons.arrow_back_ios_new_rounded,
-                    // shadows: [],
                     color: Colors.black,
                   ),
-                  // highlightColor: Color.fromARGB(255, 255, 255, 255),
                   onPressed: () {
                     _pageController.previousPage(
                       duration: const Duration(milliseconds: 200),
@@ -88,11 +88,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 child: Column(
                   children: [
                     const SizedBox(height: 50.0),
-                    Image.asset(
+                    _buildImageWithLoadingIndicator(
                       'assets/images/logo_map.png',
-                      alignment: Alignment.topCenter,
                       width: 400.0,
-                      // height: 400.0,
                     ),
                     const SizedBox(height: 60.0),
                     const Text(
@@ -137,41 +135,31 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       ),
                     ),
                     const SizedBox(height: 151.5),
-                    Positioned(
-                      bottom: 20, // Adjust the bottom position as needed
-                      left: 0,
-                      right: 0,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              backgroundColor:
-                                  const Color.fromARGB(255, 78, 134, 255),
-                              elevation: 4,
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 65, vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                            onPressed: () {
-                              _pageController.nextPage(
-                                duration: const Duration(milliseconds: 200),
-                                curve: Curves.easeInOut,
-                              );
-                            },
-                            child: const Text(
-                              'Next',
-                              style: TextStyle(
-                                fontSize: 18.0,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'IBM Plex Sans',
-                              ),
-                            ),
-                          ),
-                        ],
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor:
+                            const Color.fromARGB(255, 78, 134, 255),
+                        elevation: 4,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 65, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      onPressed: () {
+                        _pageController.nextPage(
+                          duration: const Duration(milliseconds: 200),
+                          curve: Curves.easeInOut,
+                        );
+                      },
+                      child: const Text(
+                        'Next',
+                        style: TextStyle(
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.w600,
+                          fontFamily: 'IBM Plex Sans',
+                        ),
                       ),
                     ),
                   ],
@@ -179,15 +167,12 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               ),
               Container(
                 color: Colors.transparent,
-                // padding: const EdgeInsets.all(16.0),
                 child: Column(
                   children: [
                     const SizedBox(height: 50.0),
-                    Image.asset(
+                    _buildImageWithLoadingIndicator(
                       'assets/images/logo_phone.png',
-                      alignment: Alignment.topCenter,
                       width: 400.0,
-                      // height: 400.0,
                     ),
                     const SizedBox(height: 60.0),
                     const Text(
@@ -232,41 +217,31 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       ),
                     ),
                     const SizedBox(height: 151.5),
-                    Positioned(
-                      bottom: 20, // Adjust the bottom position as needed
-                      left: 0,
-                      right: 0,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              backgroundColor:
-                                  const Color.fromARGB(255, 78, 134, 255),
-                              elevation: 4,
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 65, vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                            onPressed: () {
-                              _pageController.nextPage(
-                                duration: const Duration(milliseconds: 200),
-                                curve: Curves.easeInOut,
-                              );
-                            },
-                            child: const Text(
-                              'Next',
-                              style: TextStyle(
-                                fontSize: 18.0,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'IBM Plex Sans',
-                              ),
-                            ),
-                          ),
-                        ],
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor:
+                            const Color.fromARGB(255, 78, 134, 255),
+                        elevation: 4,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 65, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      onPressed: () {
+                        _pageController.nextPage(
+                          duration: const Duration(milliseconds: 200),
+                          curve: Curves.easeInOut,
+                        );
+                      },
+                      child: const Text(
+                        'Next',
+                        style: TextStyle(
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.w600,
+                          fontFamily: 'IBM Plex Sans',
+                        ),
                       ),
                     ),
                   ],
@@ -278,11 +253,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 child: Column(
                   children: [
                     const SizedBox(height: 35.0),
-                    Image.asset(
+                    _buildImageWithLoadingIndicator(
                       'assets/images/logo_heart.png',
-                      alignment: Alignment.topCenter,
                       width: 400.0,
-                      // height: 400.0,
                     ),
                     const SizedBox(height: 80.0),
                     const Text(
@@ -307,36 +280,31 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       ),
                     ),
                     const SizedBox(height: 180.0),
-                    Positioned(
-                      bottom: 20, // Adjust the bottom position as needed
-                      left: 0,
-                      right: 0,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              backgroundColor:
-                                  const Color.fromARGB(255, 78, 134, 255),
-                              elevation: 4,
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 65, vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                            onPressed: () {},
-                            child: const Text(
-                              'Get Start',
-                              style: TextStyle(
-                                fontSize: 18.0,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'IBM Plex Sans',
-                              ),
-                            ),
-                          ),
-                        ],
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor:
+                            const Color.fromARGB(255, 78, 134, 255),
+                        elevation: 4,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 65, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const RegisterPage()));
+                      },
+                      child: const Text(
+                        'Get Start',
+                        style: TextStyle(
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.w600,
+                          fontFamily: 'IBM Plex Sans',
+                        ),
                       ),
                     ),
                   ],
@@ -345,7 +313,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             ],
           ),
           Positioned(
-            // bottom: 40.0,
             top: 290,
             left: 158.0,
             right: 0.0,
@@ -366,6 +333,37 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildImageWithLoadingIndicator(
+    String imagePath, {
+    double width = 200.0,
+  }) {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Image.asset(
+          imagePath,
+          width: width,
+        ),
+        FutureBuilder(
+          future: precacheImage(AssetImage(imagePath), context),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const CircularProgressIndicator();
+            } else if (snapshot.hasError) {
+              return Icon(
+                Icons.error_rounded,
+                color: Colors.blue,
+                size: width / 2,
+              );
+            } else {
+              return const SizedBox.shrink();
+            }
+          },
+        ),
+      ],
     );
   }
 }

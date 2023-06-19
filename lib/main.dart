@@ -9,7 +9,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: WelcomeScreen(),
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(fontFamily: 'IBMPlexSans'),
+      home: const WelcomeScreen(),
     );
   }
 }
