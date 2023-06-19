@@ -6,7 +6,7 @@ import 'package:warnalertwithme/page/register.dart';
 import 'package:warnalertwithme/page/resetpassword.dart';
 
 class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+  const LoginPage({Key? key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,21 +25,21 @@ class LoginPage extends StatelessWidget {
     );
 
     return Scaffold(
-      body: Container(
-        padding: const EdgeInsets.all(28),
-        child: Column(
-          children: [
-            Expanded(
+      body: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(28),
+            child: Padding(
+              padding: const EdgeInsets.only(top:70, bottom: 90, left: 25, right: 25),
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 100),
-                    child: Image.asset(
-                      'images/Logo.png',
-                      width: 200,
-                      height: 200,
-                    ),
+                  Image.asset(
+                    'images/Logo.png',
+                    width: 200,
+                    height: 200,
                   ),
                   const Padding(
                     padding: EdgeInsets.only(top: 7),
@@ -115,9 +115,10 @@ class LoginPage extends StatelessWidget {
                     alignment: Alignment.centerRight,
                     child: Padding(
                       padding: const EdgeInsets.only(
-                          top: 5,
-                          bottom: 15,
-                          right: 20), // Adjust the padding here
+                        top: 5,
+                        bottom: 25,
+                        right: 20,
+                      ),
                       child: GestureDetector(
                         onTap: () {
                           Navigator.push(
@@ -171,45 +172,46 @@ class LoginPage extends StatelessWidget {
                       },
                     ),
                   ),
+                  
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 0),
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: RichText(
-                  text: TextSpan(
-                    text: 'Don\'t have an account? ',
-                    style: const TextStyle(
-                      fontSize: 13,
-                      color: kFontGrey1,
-                    ),
-                    children: <TextSpan>[
-                      TextSpan(
-                        text: 'Sign up',
-                        style: const TextStyle(
-                          fontSize: 13,
-                          color: Colors.blue,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const RegisterPage(),
+          ),
+          Padding(
+                    padding: const EdgeInsets.only(bottom: 0),
+                    child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: RichText(
+                        text: TextSpan(
+                          text: 'Don\'t have an account? ',
+                          style: const TextStyle(
+                            fontSize: 13,
+                            color: kFontGrey1,
+                          ),
+                          children: <TextSpan>[
+                            TextSpan(
+                              text: 'Sign up',
+                              style: const TextStyle(
+                                fontSize: 13,
+                                color: Colors.blue,
+                                fontWeight: FontWeight.bold,
                               ),
-                            );
-                          },
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const RegisterPage(),
+                                    ),
+                                  );
+                                },
+                            ),
+                          ],
+                        ),
                       ),
-                    ],
+                    ),
                   ),
-                ),
-              ),
-            ),
-          ],
-        ),
+        ],
       ),
     );
   }
