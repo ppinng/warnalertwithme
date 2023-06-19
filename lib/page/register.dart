@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class RegisterPage extends StatefulWidget {
-  const RegisterPage({super.key});
+  const RegisterPage({Key? key}) : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
@@ -129,94 +129,126 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 25),
-                  child: Container(
-                    width: 291,
-                    height: 55,
-                    decoration: blueBoxDecoration,
-                    child: Row(
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.all(8),
-                          child: Icon(
-                            Icons.person,
-                            color: kFontGrey3,
-                          ),
-                        ),
-                        Expanded(
-                          child: TextField(
-                            controller: _usernameController,
-                            decoration: customInputDecoration.copyWith(
-                              hintText: 'Username',
-                              errorStyle: const TextStyle(color: Colors.red),
-                              errorText:
-                                  _isNotValidate ? "Enter your Username" : null,
+                  padding: const EdgeInsets.only(top: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: 291,
+                        height: 55,
+                        decoration: blueBoxDecoration,
+                        child: Row(
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.all(8),
+                              child: Icon(
+                                Icons.person,
+                                color: kFontGrey3,
+                              ),
                             ),
-                          ),
+                            Expanded(
+                              child: TextField(
+                                controller: _usernameController,
+                                decoration: customInputDecoration.copyWith(
+                                  hintText: 'Username',
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 5, left: 10),
+                        child: Text(
+                          _isNotValidate ? "Please enter your username" : "",
+                          style: const TextStyle(
+                            color: Colors.red,
+                            fontSize: 12),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 20),
-                  child: Container(
-                    width: 291,
-                    height: 55,
-                    decoration: blueBoxDecoration,
-                    child: Row(
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.all(8),
-                          child: Icon(
-                            Icons.email,
-                            color: kFontGrey3,
-                          ),
-                        ),
-                        Expanded(
-                          child: TextField(
-                            controller: _emailController,
-                            decoration: customInputDecoration.copyWith(
-                              hintText: 'E-mail',
-                              errorStyle: const TextStyle(color: Colors.red),
-                              errorText:
-                                  _isNotValidate ? "Enter your Email" : null,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: 291,
+                        height: 55,
+                        decoration: blueBoxDecoration,
+                        child: Row(
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.all(8),
+                              child: Icon(
+                                Icons.email,
+                                color: kFontGrey3,
+                              ),
                             ),
-                          ),
+                            Expanded(
+                              child: TextField(
+                                controller: _emailController,
+                                decoration: customInputDecoration.copyWith(
+                                  hintText: 'E-mail',
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 5, left: 10),
+                        child: Text(
+                          _isNotValidate ? "Please enter your Email" : "",
+                          style: const TextStyle(
+                            color: Colors.red,
+                            fontSize: 12),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 25),
-                  child: Container(
-                    width: 291,
-                    height: 55,
-                    decoration: blueBoxDecoration,
-                    child: Row(
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.all(8),
-                          child: Icon(
-                            Icons.lock,
-                            color: kFontGrey3,
-                          ),
-                        ),
-                        Expanded(
-                          child: TextField(
-                            controller: _passController,
-                            obscureText: true,
-                            decoration: customInputDecoration.copyWith(
-                              hintText: 'Password',
-                              errorStyle: const TextStyle(color: Colors.red),
-                              errorText:
-                                  _isNotValidate ? "Enter your Password" : null,
+                  padding: const EdgeInsets.only(top: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: 291,
+                        height: 55,
+                        decoration: blueBoxDecoration,
+                        child: Row(
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.all(8),
+                              child: Icon(
+                                Icons.email,
+                                color: kFontGrey3,
+                              ),
                             ),
-                          ),
+                            Expanded(
+                              child: TextField(
+                                controller: _passController,
+                                decoration: customInputDecoration.copyWith(
+                                  hintText: 'Password',
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 5, left: 10),
+                        child: Text(
+                          _isNotValidate ? "Please enter your password" : "",
+                          style: const TextStyle(
+                            color: Colors.red,
+                            fontSize: 12),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 Padding(
