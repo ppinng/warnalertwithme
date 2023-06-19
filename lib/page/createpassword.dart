@@ -3,7 +3,7 @@ import 'package:warnalertwithme/constant.dart';
 import 'package:warnalertwithme/page/login.dart';
 
 class CreatePasswordPage extends StatelessWidget {
-  const CreatePasswordPage({super.key});
+  const CreatePasswordPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +25,7 @@ class CreatePasswordPage extends StatelessWidget {
       body: Column(
         children: [
           Container(
-            padding: const EdgeInsets.only(top: 40, left: 20),
+            padding: const EdgeInsets.only(top: 60, left: 20),
             alignment: Alignment.topLeft,
             child: GestureDetector(
               onTap: () {
@@ -39,7 +39,7 @@ class CreatePasswordPage extends StatelessWidget {
           ),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 80, horizontal: 20),
+              padding: const EdgeInsets.all(30),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -54,7 +54,7 @@ class CreatePasswordPage extends StatelessWidget {
                     padding: EdgeInsets.all(5),
                     child: Center(
                       child: Text(
-                        'Your new password must be different from previously used passwords.',
+                        'Your new password must be different \n from previously used passwords.',
                         style: TextStyle(fontSize: 16, color: kFontGrey1),
                         textAlign: TextAlign.center,
                       ),
@@ -88,7 +88,7 @@ class CreatePasswordPage extends StatelessWidget {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 20, bottom: 30),
+                    padding: const EdgeInsets.only(top: 20, bottom: 0),
                     child: Container(
                       width: 291,
                       height: 55,
@@ -114,6 +114,7 @@ class CreatePasswordPage extends StatelessWidget {
                       ),
                     ),
                   ),
+                  const SizedBox(height: 20), // Reduced space here
                   SizedBox(
                     height: 50,
                     width: 130,
@@ -151,40 +152,6 @@ class CreatePasswordPage extends StatelessWidget {
               ),
             ),
           ),
-          // Padding(
-          //   padding: const EdgeInsets.all(30.0),
-          //   child: Align(
-          //     alignment: Alignment.bottomCenter,
-          //     child: RichText(
-          //       text: TextSpan(
-          //         text: 'Don\'t have an account? ',
-          //         style: const TextStyle(
-          //           fontSize: 13,
-          //           color: kFontGrey1,
-          //         ),
-          //         children: <TextSpan>[
-          //           TextSpan(
-          //             text: 'Sign in',
-          //             style: const TextStyle(
-          //               fontSize: 13,
-          //               color: Colors.blue,
-          //               fontWeight: FontWeight.bold,
-          //             ),
-          //             recognizer: TapGestureRecognizer()
-          //               ..onTap = () {
-          //                 Navigator.push(
-          //                   context,
-          //                   MaterialPageRoute(
-          //                     builder: (context) => LoginPage(),
-          //                   ),
-          //                 );
-          //               },
-          //           ),
-          //         ],
-          //       ),
-          //     ),
-          //   ),
-          // ),
         ],
       ),
     );

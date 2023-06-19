@@ -96,7 +96,7 @@ class ResetPasswordPage extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                 builder: (context) =>
-                                    const CreatePasswordPage(),
+                                    CreatePasswordPage(),
                               ),
                             );
                           },
