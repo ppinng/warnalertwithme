@@ -1,5 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:warnalertwithme/constant.dart';
@@ -9,9 +7,9 @@ import 'dart:convert';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
+  const RegisterPage({Key? key}) : super(key: key);
 
   @override
-  // ignore: library_private_types_in_public_api
   _RegisterPageState createState() => _RegisterPageState();
 }
 
@@ -46,12 +44,14 @@ class _RegisterPageState extends State<RegisterPage> {
 
       if (response.statusCode == 200) {
         // Registration successful, navigate to the login page
+        // ignore: use_build_context_synchronously
         Navigator.pushReplacement(
           dialogContext, // Use the stored context instead of 'context'
           MaterialPageRoute(builder: (context) => const LoginPage()),
         );
       } else {
         // Registration failed, display an error message
+        // ignore: use_build_context_synchronously
         showDialog(
           context: dialogContext, // Use the stored context instead of 'context'
           builder: (context) {
@@ -129,6 +129,45 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                 ),
                 Padding(
+                  padding: const EdgeInsets.only(top: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: 291,
+                        height: 55,
+                        decoration: blueBoxDecoration,
+                        child: Row(
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.all(8),
+                              child: Icon(
+                                Icons.person,
+                                color: kFontGrey3,
+                              ),
+                            ),
+                            Expanded(
+                              child: TextField(
+                                controller: _usernameController,
+                                decoration: customInputDecoration.copyWith(
+                                  hintText: 'Username',
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 5, left: 10),
+                        child: Text(
+                          _isNotValidate ? "Please enter your username" : "",
+                          style: const TextStyle(
+                            color: Colors.red,
+                            fontSize: 12),
+                        ),
+                      ),
+                    ],
+                  ),
                   padding: const EdgeInsets.only(top: 20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -252,7 +291,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 20, bottom: 30),
+                  padding: const EdgeInsets.only(top: 5, bottom: 20),
                   child: Container(
                     width: 291,
                     height: 55,
@@ -312,7 +351,7 @@ class _RegisterPageState extends State<RegisterPage> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(30.0),
+            padding: const EdgeInsets.all(95.0),
             child: Align(
               alignment: Alignment.bottomCenter,
               child: RichText(
