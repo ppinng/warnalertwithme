@@ -1,5 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:warnalertwithme/constant.dart';
@@ -11,7 +9,6 @@ class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _RegisterPageState createState() => _RegisterPageState();
 }
 
@@ -46,12 +43,14 @@ class _RegisterPageState extends State<RegisterPage> {
 
       if (response.statusCode == 200) {
         // Registration successful, navigate to the login page
+        // ignore: use_build_context_synchronously
         Navigator.pushReplacement(
           dialogContext, // Use the stored context instead of 'context'
           MaterialPageRoute(builder: (context) => const LoginPage()),
         );
       } else {
         // Registration failed, display an error message
+        // ignore: use_build_context_synchronously
         showDialog(
           context: dialogContext, // Use the stored context instead of 'context'
           builder: (context) {
