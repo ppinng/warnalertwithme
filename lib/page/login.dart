@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -63,12 +65,13 @@ class _LoginPageState extends State<LoginPage> {
         );
       } else {
         ScaffoldMessenger.of(dialogContext).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text(
-              'Invalid username or password',
-              style: TextStyle(color: Colors.red),
+              jsonResponse[
+                  'message'], // Display the error message received from the server
+              style: const TextStyle(color: Colors.red),
             ),
-            duration: Duration(seconds: 3),
+            duration: const Duration(seconds: 3),
           ),
         );
       }
