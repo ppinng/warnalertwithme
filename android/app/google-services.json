@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "543741670107",
+    "project_id": "warnalert-26c23",
+    "storage_bucket": "warnalert-26c23.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:543741670107:android:ee8a88aae74915dd0d52fe",
+        "android_client_info": {
+          "package_name": "com.example.warnalertwithme"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "543741670107-1m045fb5jrjjp8e8m8tv4vjpcstjaiqp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAOsaGTO6j9O6GKxJrQkF0o44H1xy77jQE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "543741670107-1m045fb5jrjjp8e8m8tv4vjpcstjaiqp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
