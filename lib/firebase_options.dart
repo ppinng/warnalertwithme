@@ -50,20 +50,20 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyAOsaGTO6j9O6GKxJrQkF0o44H1xy77jQE',
-    appId: '1:543741670107:android:ee8a88aae74915dd0d52fe',
-    messagingSenderId: '543741670107',
-    projectId: 'warnalert-26c23',
-    storageBucket: 'warnalert-26c23.appspot.com',
+    apiKey: 'AIzaSyA3Dzxh2MMGP2rrXpCZU664JcmHD37-zSY',
+    appId: '1:219616108065:android:0cea0e032f5686812f4d60',
+    messagingSenderId: '219616108065',
+    projectId: 'warnalert',
+    storageBucket: 'warnalert.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBrRr314ViZihGlwVyiZoaAu0Yp7uJrenk',
-    appId: '1:543741670107:ios:c3542507aee2abbf0d52fe',
-    messagingSenderId: '543741670107',
-    projectId: 'warnalert-26c23',
-    storageBucket: 'warnalert-26c23.appspot.com',
-    iosClientId: '543741670107-faarkc5cjebacd1j22upoohat4fn5cks.apps.googleusercontent.com',
+    apiKey: 'AIzaSyAtxQRUJssPchGLE_ZlxZFFpMEI1XF8dZo',
+    appId: '1:219616108065:ios:f675968011596f022f4d60',
+    messagingSenderId: '219616108065',
+    projectId: 'warnalert',
+    storageBucket: 'warnalert.appspot.com',
+    iosClientId: '219616108065-tujc3svse8flgvhk9vl9i8gthjrslgci.apps.googleusercontent.com',
     iosBundleId: 'com.example.warnalertwithme',
   );
 }
