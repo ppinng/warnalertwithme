@@ -42,6 +42,8 @@ dependencies:
   shared_preferences: ^2.1.2
   jwt_decoder: ^2.0.1
   firebase_core: ^2.14.0
+  file_picker: ^5.3.1
+  firebase_storage: ^11.2.3
 
 dev_dependencies:
   flutter_test:
@@ -73,6 +75,7 @@ flutter:
     - assets/images/logo_mapp.svg
     - assets/images/logo_phonee.svg
     - assets/images/logo_heartt.svg
+    - assets/images/pin.png
     - images/Logo.png
     - images/randomppl.png
   #   - images/a_dot_ham.jpeg
