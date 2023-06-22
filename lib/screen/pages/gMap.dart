@@ -1,8 +1,15 @@
+import 'dart:async';
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
-import 'package:flutter/widgets.dart';
-
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({Key? key}) : super(key: key);
@@ -16,18 +23,128 @@ class _MapScreenState extends State<MapScreen> {
   Location _location = Location();
   LocationData? _currentLocation;
   bool _editingMode = false;
-  List<Marker> _markers = [];
+  Set<Marker> _markers = {};
   Set<Marker> _selectedMarkers = Set<Marker>();
-
+  Set<Marker> _addMarkers = {};
+  late SharedPreferences prefs;
+  var myToken;
 
   @override
   void initState() {
+    initSharedPref();
     super.initState();
     _location.onLocationChanged.listen((LocationData currentLocation) {
       setState(() {
         _currentLocation = currentLocation;
       });
     });
+    FirebaseStorage storage = FirebaseStorage.instance;
+    getMarkerData();
+    Timer.periodic(const Duration(seconds: 30), (_) {
+      getMarkerData();
+    });
+  }
+
+  void initSharedPref() async {
+    prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    myToken = token;
+  }
+
+  void getMarkerData() async {
+    final url = 'http://10.0.2.2:3000/api/pins';
+
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      final pins = data['data'];
+
+      // Create a set to store the new markers
+      Set<Marker> newMarkers = {};
+
+      for (var pin in pins) {
+        final specify = {
+          'latitude': pin['latitude'],
+          'longitude': pin['longitude'],
+          'address': pin['location_name'],
+        };
+
+        final specifyId = pin['pin_id'].toString();
+
+        final markerId = MarkerId(specifyId);
+        final marker = Marker(
+          markerId: markerId,
+          position: LatLng(
+            specify['latitude'],
+            specify['longitude'],
+          ),
+          infoWindow: InfoWindow(
+            snippet: _editingMode ? 'Click to Delete' : null,
+            title: specify['address'],
+            onTap: () {
+              if (_editingMode) {
+                // Find the corresponding marker
+                Marker? marker = _markers
+                    .firstWhere((marker) => marker.markerId == markerId);
+
+                if (marker != null) {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text(marker.infoWindow.title ?? ''),
+                        content: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                          ),
+                          onPressed: () {
+                            _deleteMarker(specifyId);
+                            getMarkerData();
+                            Navigator.pop(context);
+                          },
+                          child: Text('Delete'),
+                        ),
+                      );
+                    },
+                  );
+                }
+              }
+            },
+          ),
+          // icon: markerbitmap,
+        );
+
+        newMarkers.add(marker);
+      }
+
+      setState(() {
+        _markers = newMarkers;
+      });
+
+      print('Retrieved pins data: $pins');
+    } else {
+      throw Exception('Failed to retrieve pins data');
+    }
+  }
+
+  //Delete marker
+  Future<void> _deleteMarker(String specifyId) async {
+    final pinIdToDelete = specifyId;
+    final url = 'http://10.0.2.2:3000/api/pins/$pinIdToDelete';
+    final response = await http.delete(
+      Uri.parse(url),
+    );
+
+    // Check the response status code
+    if (response.statusCode == 200) {
+      print('Pin successfully deleted');
+    } else if (response.statusCode == 404) {
+      print('Pin not found');
+    } else {
+      print('Error deleting pin');
+      print('Response body: ${response.body}');
+    }
   }
 
   void _toggleEditingMode() {
@@ -37,19 +154,17 @@ class _MapScreenState extends State<MapScreen> {
         _markers.clear();
       }
     });
+    getMarkerData();
   }
 
   void _onMapTap(LatLng position) {
-    if (_editingMode) {
+    if (_editingMode && _addMarkers.isEmpty) {
       setState(() {
         final marker = Marker(
           markerId: MarkerId(position.toString()),
           position: position,
-          onTap: () {
-            _deleteMarker(MarkerId(position.toString()));
-          },
         );
-        _markers.add(marker);
+        _addMarkers.add(marker);
         _showMarkerPopup(marker);
 
         print('Latitude: ${position.latitude}');
@@ -57,6 +172,122 @@ class _MapScreenState extends State<MapScreen> {
       });
     }
   }
+
+  UploadTask? uploadTask;
+  PlatformFile? pickedFile;
+
+  void _getImageFromGallery() async {
+    final result = await FilePicker.platform.pickFiles();
+    if (result == null) return;
+    setState(() {
+      pickedFile = result.files.first;
+    });
+    _buildImageWidget();
+  }
+
+  final pinId = 'a126f427-608f-4c6a-ac5a-f5198396f645';
+  void _addMarkerWithPost(String locationName, double latitude,
+      double longitude, PlatformFile? pickedFile, String postDetail) async {
+    try {
+      final pinsUrl = 'http://10.0.2.2:3000/api/pins';
+      final postsUrl = 'http://10.0.2.2:3000/api/posts';
+
+      // Step 1: Add a new pin
+      final pinResponse = await http.post(
+        Uri.parse(pinsUrl),
+        headers: {'authorization': 'Bearer $myToken'},
+        body: {
+          'location_name': locationName,
+          'latitude': latitude.toString(),
+          'longitude': longitude.toString(),
+        },
+      );
+
+      if (pinResponse.statusCode == 200) {
+        // Pin added successfully
+
+        // Extract the pin ID from the pin response
+        final responseData = jsonDecode(pinResponse.body);
+
+        // Step 2: Upload the file to Firebase Storage
+        if (pickedFile != null) {
+          FirebaseStorage storage = FirebaseStorage.instance;
+          Reference storageRef = storage
+              .ref()
+              .child('images/${DateTime.now().millisecondsSinceEpoch}');
+
+          final metadata = SettableMetadata(
+            contentType: 'image/jpeg',
+          );
+
+          uploadTask = storageRef.putFile(
+            File(pickedFile.path!),
+            metadata,
+          );
+
+          final TaskSnapshot snapshot = await uploadTask!.whenComplete(() {});
+          final downloadURL = await snapshot.ref.getDownloadURL();
+
+          // Step 3: Create a new post with the download URL
+          final postResponse = await http.post(
+            Uri.parse(postsUrl),
+            headers: {'authorization': 'Bearer $myToken'},
+            body: {
+              'pin_id': pinId,
+              'post_detail': postDetail,
+              'post_image': downloadURL,
+            },
+          );
+
+          if (postResponse.statusCode == 200) {
+            // Post created successfully
+            print('Post created successfully');
+            // Update the markers list with the new marker
+            setState(() {
+              final marker = Marker(
+                markerId: MarkerId(DateTime.now().toString()),
+                position: LatLng(latitude, longitude),
+                infoWindow: InfoWindow(
+                  title: locationName,
+                ),
+              );
+              _markers.add(marker);
+            });
+          } else {
+            // Error creating post
+            print('Error creating post');
+          }
+
+          if (postResponse.statusCode == 200) {
+            // Post created successfully
+            print('Post created successfully');
+            // Update the markers list with the new marker
+            setState(() {
+              final marker = Marker(
+                markerId: MarkerId(DateTime.now().toString()),
+                position: LatLng(latitude, longitude),
+                infoWindow: InfoWindow(
+                  title: locationName,
+                ),
+              );
+              _markers.add(marker);
+            });
+          } else {
+            // Error creating post
+            print('Error creating post');
+          }
+        }
+      } else {
+        // Error adding pin
+        print('Error adding pin');
+      }
+    } catch (error) {
+      print('Error: $error');
+    }
+  }
+
+  TextEditingController locationController = TextEditingController();
+  TextEditingController postDetailController = TextEditingController();
 
   void _showMarkerPopup(Marker marker) {
     showDialog(
@@ -107,13 +338,34 @@ class _MapScreenState extends State<MapScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const SizedBox(height: 100.0),
-                        TextFormField(
-                          style: TextStyle(fontSize: 29.0),
-                          decoration: const InputDecoration.collapsed(
-                            hintText: 'Name this location..',
-                            hintStyle: TextStyle(fontSize: 29.0),
+                        Container(
+                          width: 290,
+                          height: 60,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: const Color.fromARGB(240, 240, 240, 240),
+                            borderRadius: BorderRadius.circular(15.0),
                           ),
-                          maxLines: null,
+                          child: TextFormField(
+                            controller: locationController,
+                            style: const TextStyle(
+                              fontSize: 25.0,
+                              color: Color.fromARGB(
+                                  255, 0, 0, 0), // Set the desired color
+                            ),
+                            textAlign: TextAlign.center,
+                            decoration: const InputDecoration.collapsed(
+                              hintText: 'Name this location..',
+                              hintStyle: TextStyle(
+                                fontSize: 25.0,
+                                fontStyle: FontStyle.italic,
+                                fontWeight: FontWeight.w500,
+                                color: Color.fromARGB(255, 128, 128,
+                                    128), // Set the desired hint color
+                              ),
+                            ),
+                            maxLines: null,
+                          ),
                         ),
                       ],
                     ),
@@ -121,7 +373,7 @@ class _MapScreenState extends State<MapScreen> {
                     Container(
                       alignment: Alignment.bottomCenter,
                       child: Padding(
-                        padding: const EdgeInsets.only(top: 110),
+                        padding: const EdgeInsets.only(top: 85),
                         child: SizedBox(
                           width: 100, // Set the desired width
                           height: 40, // Set the desired height
@@ -129,7 +381,7 @@ class _MapScreenState extends State<MapScreen> {
                             onPressed: () {
                               Navigator.pop(
                                   context); // Close the current AlertDialog
-                              _showNextPopup(); // Show the next popup
+                              _showNextPopup(marker); // Show the next popup
                             },
                             style: ButtonStyle(
                               shape: MaterialStateProperty.all<
@@ -157,7 +409,24 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
-  void _showNextPopup() {
+  Widget _buildImageWidget() {
+    if (pickedFile == null) {
+      return Image.asset(
+        'assets/images/upload pic.png',
+        width: 100.0,
+        height: 100.0,
+      );
+    } else {
+      final file = File(pickedFile!.path!);
+      return Image.memory(
+        file.readAsBytesSync(),
+        width: 100.0,
+        height: 100.0,
+      );
+    }
+  }
+
+  void _showNextPopup(Marker marker) {
     showDialog(
       barrierDismissible: false,
       context: context,
@@ -215,16 +484,13 @@ class _MapScreenState extends State<MapScreen> {
                       ),
                       padding: const EdgeInsets.fromLTRB(70, 25, 70, 25),
                       child: GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          _getImageFromGallery();
+                        },
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            // const SizedBox(height: 10.0),
-                            Image.asset(
-                              'assets/images/upload pic.png',
-                              width: 100.0,
-                              height: 100.0,
-                            ),
+                            _buildImageWidget(),
                           ],
                         ),
                       ),
@@ -256,6 +522,7 @@ class _MapScreenState extends State<MapScreen> {
                           const SizedBox(height: 10.0),
                           Expanded(
                             child: TextFormField(
+                              controller: postDetailController,
                               decoration: const InputDecoration.collapsed(
                                 hintText: 'Tell us about this location..',
                                 hintStyle: TextStyle(fontSize: 12.0),
@@ -275,7 +542,16 @@ class _MapScreenState extends State<MapScreen> {
                           width: 100, // Set the desired width
                           height: 40, // Set the desired height
                           child: ElevatedButton(
-                            onPressed: _addInformation,
+                            onPressed: () {
+                              String locationName = locationController.text;
+                              double latitude = marker.position.latitude;
+                              double longitude = marker.position.longitude;
+                              String postDetail = postDetailController.text;
+                              _addMarkerWithPost(locationName, latitude,
+                                  longitude, pickedFile, postDetail);
+                              Navigator.pop(context);
+                              _cancelEditingMode();
+                            },
                             style: ButtonStyle(
                               shape: MaterialStateProperty.all<
                                   RoundedRectangleBorder>(
@@ -302,120 +578,22 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
-  
-
   void _cancelCreatePin() {
     setState(() {
       Navigator.pop(context);
-      if (_markers.isNotEmpty) {
-        _markers.removeLast();
-      }
+      _addMarkers.clear();
     });
-  }
-
-  void _deleteMarker(MarkerId markerId) {
-    if (_editingMode) {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15.0),
-            ),
-            backgroundColor: const Color.fromARGB(255, 224, 244, 255),
-            content: Container(
-              width: 383.0, // Set the desired width
-              height: 90.0, // Set the desired height
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.only(
-                        bottom: 10.0), // Add padding to the bottom
-                    child: Text(
-                      'Confirm to remove the marker ?',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 18.0, // Set the desired font size
-                      ),
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            _markers.removeWhere(
-                                (marker) => marker.markerId == markerId);
-                          });
-                          Navigator.of(context).pop(); // Close the dialog
-                        },
-                        child: const Text(
-                          'Yes',
-                          style: TextStyle(
-                              fontSize: 13.0), // Set the desired font size
-                        ),
-                        style: ButtonStyle(
-                          padding:
-                              MaterialStateProperty.all<EdgeInsetsGeometry>(
-                            EdgeInsets.symmetric(
-                                vertical: 12.0,
-                                horizontal: 45.0), // Adjust the padding
-                          ),
-                          backgroundColor:
-                              MaterialStateProperty.all<Color>(Colors.blue),
-                          shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(50.0),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 30.0),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context).pop(); // Close the dialog
-                        },
-                        child: const Text(
-                          'No',
-                          style: TextStyle(
-                              fontSize: 13.0), // Set the desired font size
-                        ),
-                        style: ButtonStyle(
-                          padding:
-                              MaterialStateProperty.all<EdgeInsetsGeometry>(
-                            EdgeInsets.symmetric(
-                                vertical: 12.0,
-                                horizontal: 50.0), // Adjust the padding
-                          ),
-                          backgroundColor:
-                              MaterialStateProperty.all<Color>(Colors.red),
-                          shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(45.0),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
-      );
-    }
   }
 
   void _cancelEditingMode() {
     setState(() {
       _editingMode = false;
+      _addMarkers.clear();
+      locationController.clear();
+      postDetailController.clear();
+      pickedFile = null;
     });
+    getMarkerData();
   }
 
   void _addInformation() {
@@ -424,8 +602,6 @@ class _MapScreenState extends State<MapScreen> {
       Navigator.pop(context);
     });
   }
-
-  
 
   @override
   Widget build(BuildContext context) {
@@ -447,7 +623,7 @@ class _MapScreenState extends State<MapScreen> {
             myLocationButtonEnabled: false,
             zoomControlsEnabled: false,
             onTap: _onMapTap,
-            markers: Set<Marker>.from(_markers),
+            markers: _markers,
           ),
           Align(
             alignment: Alignment.bottomRight,

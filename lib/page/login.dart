@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -63,12 +65,13 @@ class _LoginPageState extends State<LoginPage> {
         );
       } else {
         ScaffoldMessenger.of(dialogContext).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text(
-              'Invalid username or password',
-              style: TextStyle(color: Colors.red),
+              jsonResponse[
+                  'message'], // Display the error message received from the server
+              style: const TextStyle(color: Colors.red),
             ),
-            duration: Duration(seconds: 3),
+            duration: const Duration(seconds: 3),
           ),
         );
       }
@@ -153,16 +156,6 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 5, left: 10),
-                            child: Text(
-                              _isNotValidate
-                                  ? "Please enter your username"
-                                  : "",
-                              style: const TextStyle(
-                                  color: Colors.red, fontSize: 12),
-                            ),
-                          ),
                         ],
                       ),
                     ),
@@ -189,16 +182,6 @@ class _LoginPageState extends State<LoginPage> {
                               decoration: customInputDecoration.copyWith(
                                 hintText: 'Password',
                               ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 5, left: 10),
-                            child: Text(
-                              _isNotValidate
-                                  ? "Please enter your Password"
-                                  : "",
-                              style: const TextStyle(
-                                  color: Colors.red, fontSize: 12),
                             ),
                           ),
                         ],
@@ -240,7 +223,50 @@ class _LoginPageState extends State<LoginPage> {
                       builder: (context) {
                         return ElevatedButton(
                           onPressed: () {
-                            loginUser();
+                            if (_usernameController.text.isEmpty &&
+                                _passController.text.isNotEmpty) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                    "Please enter your username",
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  duration: Duration(seconds: 3),
+                                ),
+                              );
+                            } else if (_usernameController.text.isNotEmpty &&
+                                _passController.text.isEmpty) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                    "Please enter password",
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  duration: Duration(seconds: 3),
+                                ),
+                              );
+                            } else if (_isNotValidate) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                    "Please enter username and password",
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  duration: Duration(seconds: 3),
+                                ),
+                              );
+                            } else {
+                              loginUser();
+                            }
                           },
                           style: ElevatedButton.styleFrom(
                             shape: RoundedRectangleBorder(
