@@ -11,8 +11,7 @@ class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
 
   @override
-  // ignore: library_private_types_in_public_api
-  _RegisterPageState createState() => _RegisterPageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
 class _RegisterPageState extends State<RegisterPage> {
@@ -44,6 +43,7 @@ class _RegisterPageState extends State<RegisterPage> {
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(requestBody),
       );
+      var jsonResponse = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
         // Registration successful, navigate to the login page
@@ -52,26 +52,15 @@ class _RegisterPageState extends State<RegisterPage> {
           MaterialPageRoute(builder: (context) => const LoginPage()),
         );
       } else {
-        // Registration failed, display an error message
-        showDialog(
-          context: dialogContext, // Use the stored context instead of 'context'
-          builder: (context) {
-            return AlertDialog(
-              title: const Text(
-                'Registration Failed',
-                style: TextStyle(color: Colors.red),
-              ),
-              content: const Text('Please check your information'),
-              actions: <Widget>[
-                TextButton(
-                  child: const Text('OK'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            );
-          },
+        ScaffoldMessenger.of(dialogContext).showSnackBar(
+          SnackBar(
+            content: Text(
+              jsonResponse[
+                  'message'], // Display the error message received from the server
+              style: const TextStyle(color: Colors.red),
+            ),
+            duration: const Duration(seconds: 3),
+          ),
         );
       }
     } else {
@@ -226,7 +215,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             const Padding(
                               padding: EdgeInsets.all(8),
                               child: Icon(
-                                Icons.email,
+                                Icons.lock,
                                 color: kFontGrey3,
                               ),
                             ),
