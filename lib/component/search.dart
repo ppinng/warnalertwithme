@@ -21,7 +21,7 @@ class _SearchBarState extends State<SearchBar> {
   }
 
   String _formatDuration(Duration duration) {
-    if (duration.inDays > 7) {
+    if (duration.inDays >= 7) {
       var weeks = (duration.inDays / 7).floor();
       return '$weeks week${weeks > 1 ? 's' : ''} ago';
     } else if (duration.inDays > 0) {
@@ -105,11 +105,30 @@ class _SearchBarState extends State<SearchBar> {
                   itemCount: result['posts'].length,
                   itemBuilder: (context, index) {
                     var post = result['posts'][index];
-                    var formattedPostedAt =
-                        DateTime.parse(post['posted_at_formatted']);
-                    var now = DateTime.now();
-                    var difference = now.difference(formattedPostedAt);
-                    var formattedDifference = _formatDuration(difference);
+                    var timeAgo = '';
+
+                    if (post['time_ago'].containsKey('days') &&
+                        post['time_ago']['days'] != null &&
+                        post['time_ago']['days'] >= 1) {
+                      var days = post['time_ago']['days'];
+                      var hours = post['time_ago']['hours'] ?? 0;
+                      var minutes = post['time_ago']['minutes'] ?? 0;
+                      timeAgo = _formatDuration(
+                          Duration(days: days, hours: hours, minutes: minutes));
+                      // Display timeAgo with days, hours, and minutes
+                    } else if (post['time_ago'].containsKey('hours') &&
+                        post['time_ago']['hours'] != null &&
+                        post['time_ago']['hours'] >= 1) {
+                      var hours = post['time_ago']['hours'];
+                      var minutes = post['time_ago']['minutes'] ?? 0;
+                      timeAgo = _formatDuration(
+                          Duration(hours: hours, minutes: minutes));
+                      // Display timeAgo with hours and minutes
+                    } else {
+                      var minutes = post['time_ago']['minutes'] ?? 0;
+                      timeAgo = _formatDuration(Duration(minutes: minutes));
+                      // Display timeAgo with minutes
+                    }
 
                     return Card(
                       child: ListTile(
@@ -118,7 +137,7 @@ class _SearchBarState extends State<SearchBar> {
                         subtitle: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(formattedDifference),
+                            Text(timeAgo),
                             CircleAvatar(
                               backgroundImage:
                                   NetworkImage(post['profile_image']),
