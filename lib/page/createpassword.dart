@@ -1,9 +1,80 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:warnalertwithme/constant.dart';
-import 'package:warnalertwithme/page/login.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-class CreatePasswordPage extends StatelessWidget {
-  const CreatePasswordPage({Key? key}) : super(key: key);
+class CreatePasswordPage extends StatefulWidget {
+  final String email;
+
+  const CreatePasswordPage({Key? key, required this.email}) : super(key: key);
+
+  @override
+  State<CreatePasswordPage> createState() => _CreatePasswordPageState();
+}
+
+class _CreatePasswordPageState extends State<CreatePasswordPage> {
+  final TextEditingController _passController = TextEditingController();
+  final TextEditingController _confirmPassController = TextEditingController();
+
+  void resetPass() async {
+    String url = 'http://10.0.2.2:3000/api/auth/reset-password';
+    try {
+      final response = await http.post(Uri.parse(url), body: {
+        'email': widget.email,
+        'pass': _passController.text,
+        'confirmpass': _confirmPassController.text,
+      });
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+
+        if (!responseData['error']) {
+          // Password reset successful
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Success'),
+              content: Text(responseData['message']),
+              actions: [
+                TextButton(
+                  child: const Text('OK'),
+                  onPressed: () {
+                    var count = 0;
+                    Navigator.popUntil(context, (route) {
+                      return count++ == 2;
+                    });
+                  },
+                ),
+              ],
+            ),
+          );
+        } else {
+          // Password reset failed
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Error'),
+              content: Text(responseData['message']),
+              actions: [
+                TextButton(
+                  child: const Text('OK'),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ),
+          );
+        }
+      } else {
+        // Handle other status codes
+      }
+    } catch (e) {
+      // Handle network or server errors
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,6 +149,7 @@ class CreatePasswordPage extends StatelessWidget {
                           Expanded(
                             child: TextField(
                               obscureText: true,
+                              controller: _passController,
                               decoration: customInputDecoration.copyWith(
                                 hintText: 'Password',
                               ),
@@ -105,6 +177,7 @@ class CreatePasswordPage extends StatelessWidget {
                           Expanded(
                             child: TextField(
                               obscureText: true,
+                              controller: _confirmPassController,
                               decoration: customInputDecoration.copyWith(
                                 hintText: 'ConfirmPassword',
                               ),
@@ -122,12 +195,7 @@ class CreatePasswordPage extends StatelessWidget {
                       builder: (context) {
                         return ElevatedButton(
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const LoginPage(),
-                              ),
-                            );
+                            resetPass();
                           },
                           style: ElevatedButton.styleFrom(
                             shape: RoundedRectangleBorder(

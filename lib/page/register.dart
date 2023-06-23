@@ -19,9 +19,8 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passController = TextEditingController();
 
-  final String _errorMessage = '';
   bool _isNotValidate = false;
-  void _registerUser() async {
+  void registerUser() async {
     if (_emailController.text.isNotEmpty &&
         _usernameController.text.isNotEmpty &&
         _passController.text.isNotEmpty) {
@@ -221,6 +220,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             ),
                             Expanded(
                               child: TextField(
+                                obscureText: true,
                                 controller: _passController,
                                 decoration: customInputDecoration.copyWith(
                                   hintText: 'Password',
@@ -243,43 +243,51 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 5, bottom: 30),
-                  child: Container(
-                    width: 291,
-                    height: 55,
-                    decoration: blueBoxDecoration,
-                    child: Row(
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.all(8),
-                          child: Icon(
-                            Icons.lock,
-                            color: kFontGrey3,
-                          ),
-                        ),
-                        Expanded(
-                          child: TextField(
-                            obscureText: true,
-                            decoration: customInputDecoration.copyWith(
-                              hintText: 'Confirm Password',
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: 291,
+                        height: 55,
+                        decoration: blueBoxDecoration,
+                        child: Row(
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.all(8),
+                              child: Icon(
+                                Icons.lock,
+                                color: kFontGrey3,
+                              ),
                             ),
-                          ),
+                            Expanded(
+                              child: TextField(
+                                obscureText: true,
+                                decoration: customInputDecoration.copyWith(
+                                  hintText: 'Confirm Password',
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 5, left: 10),
+                        child: Text(
+                          _isNotValidate ? "Please enter your password" : "",
+                          style:
+                              const TextStyle(color: Colors.red, fontSize: 12),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                if (_errorMessage.isNotEmpty)
-                  Text(
-                    _errorMessage,
-                    style: const TextStyle(color: Colors.red),
-                  ),
                 SizedBox(
                   height: 50,
                   width: 130,
                   child: Builder(
                     builder: (context) {
                       return ElevatedButton(
-                        onPressed: _registerUser,
+                        onPressed: registerUser,
                         style: ElevatedButton.styleFrom(
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30),

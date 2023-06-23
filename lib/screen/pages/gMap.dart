@@ -185,7 +185,7 @@ class _MapScreenState extends State<MapScreen> {
     _buildImageWidget();
   }
 
-  final pinId = 'a126f427-608f-4c6a-ac5a-f5198396f645';
+  // final pinId = 'a126f427-608f-4c6a-ac5a-f5198396f645';
   void _addMarkerWithPost(String locationName, double latitude,
       double longitude, PlatformFile? pickedFile, String postDetail) async {
     try {
@@ -208,7 +208,11 @@ class _MapScreenState extends State<MapScreen> {
 
         // Extract the pin ID from the pin response
         final responseData = jsonDecode(pinResponse.body);
+        final data = responseData['data'];
+        final pinId = data['pin_id'].toString();
 
+        print(responseData);
+        // if (pinId != null) {
         // Step 2: Upload the file to Firebase Storage
         if (pickedFile != null) {
           FirebaseStorage storage = FirebaseStorage.instance;
@@ -257,30 +261,14 @@ class _MapScreenState extends State<MapScreen> {
             // Error creating post
             print('Error creating post');
           }
-
-          if (postResponse.statusCode == 200) {
-            // Post created successfully
-            print('Post created successfully');
-            // Update the markers list with the new marker
-            setState(() {
-              final marker = Marker(
-                markerId: MarkerId(DateTime.now().toString()),
-                position: LatLng(latitude, longitude),
-                infoWindow: InfoWindow(
-                  title: locationName,
-                ),
-              );
-              _markers.add(marker);
-            });
-          } else {
-            // Error creating post
-            print('Error creating post');
-          }
         }
       } else {
-        // Error adding pin
-        print('Error adding pin');
+        print('Error: pinId is null');
       }
+      // } else {
+      //   // Error adding pin
+      //   print('Error adding pin');
+      // }
     } catch (error) {
       print('Error: $error');
     }
@@ -582,6 +570,9 @@ class _MapScreenState extends State<MapScreen> {
     setState(() {
       Navigator.pop(context);
       _addMarkers.clear();
+      locationController.clear();
+      postDetailController.clear();
+      pickedFile = null;
     });
   }
 

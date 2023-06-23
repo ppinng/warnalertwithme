@@ -1,9 +1,64 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:warnalertwithme/constant.dart';
+import 'package:http/http.dart' as http;
 import 'package:warnalertwithme/page/createpassword.dart';
+import 'dart:convert';
 
-class ResetPasswordPage extends StatelessWidget {
+class ResetPasswordPage extends StatefulWidget {
   const ResetPasswordPage({super.key});
+
+  @override
+  State<ResetPasswordPage> createState() => _ResetPasswordPageState();
+}
+
+class _ResetPasswordPageState extends State<ResetPasswordPage> {
+  final TextEditingController _emailController = TextEditingController();
+  bool _isNotValidate = false;
+
+  void checkEmail() async {
+    if (_emailController.text.isNotEmpty) {
+      var reqBody = {
+        "email": _emailController.text,
+      };
+
+      String url = 'http://10.0.2.2:3000/api/auth/checkemail';
+      var response = await http.post(
+        Uri.parse(url),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(reqBody),
+      );
+      final BuildContext dialogContext =
+          context; // Store the context in a local variable
+      var jsonResponse = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => CreatePasswordPage(
+                    email: _emailController.text,
+                  )),
+        );
+      } else {
+        ScaffoldMessenger.of(dialogContext).showSnackBar(
+          SnackBar(
+            content: Text(
+              jsonResponse[
+                  'message'], // Display the error message received from the server
+              style: const TextStyle(color: Colors.red),
+            ),
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    } else {
+      setState(() {
+        _isNotValidate = true;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +130,7 @@ class ResetPasswordPage extends StatelessWidget {
                           ),
                           Expanded(
                             child: TextField(
-                              obscureText: true,
+                              controller: _emailController,
                               decoration: customInputDecoration.copyWith(
                                 hintText: 'E-mail',
                               ),
@@ -92,13 +147,22 @@ class ResetPasswordPage extends StatelessWidget {
                       builder: (context) {
                         return ElevatedButton(
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    CreatePasswordPage(),
-                              ),
-                            );
+                            if (_isNotValidate) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                    "Please enter your Email",
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  duration: Duration(seconds: 3),
+                                ),
+                              );
+                            } else {
+                              checkEmail();
+                            }
                           },
                           style: ElevatedButton.styleFrom(
                             shape: RoundedRectangleBorder(
@@ -123,40 +187,6 @@ class ResetPasswordPage extends StatelessWidget {
               ),
             ),
           ),
-          // Padding(
-          //   padding: const EdgeInsets.all(30.0),
-          //   child: Align(
-          //     alignment: Alignment.bottomCenter,
-          //     child: RichText(
-          //       text: TextSpan(
-          //         text: 'Don\'t have an account? ',
-          //         style: const TextStyle(
-          //           fontSize: 13,
-          //           color: kFontGrey1,
-          //         ),
-          //         children: <TextSpan>[
-          //           TextSpan(
-          //             text: 'Sign in',
-          //             style: const TextStyle(
-          //               fontSize: 13,
-          //               color: Colors.blue,
-          //               fontWeight: FontWeight.bold,
-          //             ),
-          //             recognizer: TapGestureRecognizer()
-          //               ..onTap = () {
-          //                 Navigator.push(
-          //                   context,
-          //                   MaterialPageRoute(
-          //                     builder: (context) => LoginPage(),
-          //                   ),
-          //                 );
-          //               },
-          //           ),
-          //         ],
-          //       ),
-          //     ),
-          //   ),
-          // ),
         ],
       ),
     );
