@@ -84,7 +84,6 @@ class _SearchBarState extends State<SearchBar> {
                         padding: const EdgeInsets.all(4.0),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: Colors.grey.withOpacity(0.3),
                         ),
                         child: const Icon(Icons.keyboard_arrow_down),
                       ),
@@ -92,11 +91,14 @@ class _SearchBarState extends State<SearchBar> {
                   ],
                 ),
                 const SizedBox(height: 16),
-                Text(
-                  result['location_name'],
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+                Container(
+                  alignment: Alignment.center,
+                  child: Text(
+                    result['location_name'],
+                    style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromARGB(255, 30, 108, 252)),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -130,22 +132,234 @@ class _SearchBarState extends State<SearchBar> {
                       // Display timeAgo with minutes
                     }
 
-                    return Card(
-                      child: ListTile(
-                        leading: Image.network(post['post_image']),
-                        title: Text(post['post_detail']),
-                        subtitle: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    return Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Container(
+                        width: 100,
+                        height: 125,
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 224, 244, 255),
+                          border: Border.all(
+                            color: Color(0xFF76767676),
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.circular(15.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 2,
+                              blurRadius: 5,
+                              offset: const Offset(
+                                  0, 3), // changes the position of the shadow
+                            ),
+                          ],
+                        ),
+                        child: Stack(
                           children: [
-                            Text(timeAgo),
-                            CircleAvatar(
-                              backgroundImage:
-                                  NetworkImage(post['profile_image']),
+                            Positioned(
+                              top: 17,
+                              left: 15,
+                              child: SizedBox(
+                                width: 120,
+                                height: 91,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15.0),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey.withOpacity(0.5),
+                                        spreadRadius: 2,
+                                        blurRadius: 5,
+                                        offset: const Offset(0, 3),
+                                      ),
+                                    ],
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(15.0),
+                                    child: Image.network(
+                                      post['post_image'], // Use post image URL
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Align(
+                              alignment: Alignment.center,
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(145, 0, 0, 20),
+                                child: Text(
+                                  post['post_detail'], // Use post detail
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: const Color.fromARGB(
+                                        147, 118, 118, 229),
+                                    shadows: [
+                                      Shadow(
+                                        color: Colors.black.withOpacity(0.2),
+                                        blurRadius: 5,
+                                        offset: const Offset(0, 3),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              top: 90,
+                              right: 4,
+                              child: SizedBox(
+                                width: 33,
+                                height: 30,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey.withOpacity(0.5),
+                                        spreadRadius: 2,
+                                        blurRadius: 5,
+                                        offset: const Offset(0, 3),
+                                      ),
+                                    ],
+                                  ),
+                                  child: ClipOval(
+                                    child: CircleAvatar(
+                                      radius: 15,
+                                      backgroundImage:
+                                          NetworkImage(post['profile_image']),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Align(
+                              alignment: Alignment.bottomRight,
+                              child: Padding(
+                                padding: const EdgeInsets.fromLTRB(0, 0, 41, 4),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey.withOpacity(0.1),
+                                        blurRadius: 1,
+                                        offset: const Offset(0, 1),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Text(
+                                    timeAgo, // Use post time
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      color: Color.fromARGB(147, 118, 118, 229),
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ),
                           ],
                         ),
                       ),
                     );
+                    // Padding(
+                    //   padding: const EdgeInsets.all(8.0),
+                    //   child: Material(
+                    //     elevation: 6,
+                    //     borderRadius: BorderRadius.circular(15.0),
+                    //     child: Container(
+                    //       height: 130,
+                    //       decoration: BoxDecoration(
+                    //         color: Color(0xFFE0F4FF),
+                    //         borderRadius: BorderRadius.circular(15.0),
+                    //         border: Border.all(
+                    //           color: Color(0xFF76767676),
+                    //         ),
+                    //       ),
+                    //       child: Row(
+                    //         mainAxisAlignment: MainAxisAlignment.start,
+                    //         crossAxisAlignment: CrossAxisAlignment.start,
+                    //         children: [
+                    //           Padding(
+                    //             padding: const EdgeInsets.all(14.0),
+                    //             child: ClipRRect(
+                    //               borderRadius: BorderRadius.circular(20),
+                    //               child: Image.network(post['post_image']),
+                    //             ),
+                    //           ),
+                    //           Padding(
+                    //             padding:
+                    //                 const EdgeInsets.fromLTRB(15, 25, 0, 0),
+                    //             child: Text(
+                    //               post['post_detail'],
+                    //               style: TextStyle(
+                    //                 color: Color(0xFF767676),
+                    //               ),
+                    //             ),
+                    //           ),
+                    //           Align(
+
+                    //             alignment: Alignment.bottomRight,
+                    //             child: CircleAvatar(
+                    //                 backgroundImage:
+                    //                     NetworkImage(post['profile_image'])),
+                    //           )
+                    //           // Stack(
+                    //           //   clipBehavior: Clip.none,
+                    //           //   // mainAxisAlignment: MainAxisAlignment.end,
+                    //           //   // crossAxisAlignment: CrossAxisAlignment.end,
+                    //           //   children: [
+                    //           //     Positioned(
+                    //           //       bottom: 5,
+                    //           //       right: -50,
+                    //           //       child: Container(
+                    //           //         child: Text(timeAgo),
+                    //           //       ),
+                    //           //     ),
+                    //           //     Positioned(
+                    //           //       bottom: 5,
+                    //           //       right: -90,
+                    //           //       child: CircleAvatar(
+                    //           //         backgroundImage:
+                    //           //             NetworkImage(post['profile_image']),
+                    //           //       ),
+                    //           //     ),
+                    //           //     Column(
+                    //           //       mainAxisAlignment: MainAxisAlignment.end,
+                    //           //       crossAxisAlignment: CrossAxisAlignment.end,
+                    //           //       children: [
+                    //           //         // Container(
+                    //           //         //   child: Text(timeAgo),
+                    //           //         // ),
+                    //           //       ],
+                    //           //     ),
+                    //           //     // Container(
+                    //           //     //   child: CircleAvatar(
+                    //           //     //     backgroundImage:
+                    //           //     //         NetworkImage(post['profile_image']),
+                    //           //     //   ),
+                    //           //     // )
+                    //           //   ],
+                    //           // )
+                    //           // ListTile(
+                    //           //   // leading: Image.network(post['post_image']),
+                    //           //   title: Text(post['post_detail']),
+                    //           //   subtitle: Row(
+                    //           //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //           //     children: [
+                    //           //       Text(timeAgo),
+                    //           //       CircleAvatar(
+                    //           //         backgroundImage:
+                    //           //             NetworkImage(post['profile_image']),
+                    //           //       ),
+                    //           //     ],
+                    //           //   ),
+                    //           // ),
+                    //         ],
+                    //       ),
+                    //     ),
+                    //   ),
+                    // );
                   },
                 ),
               ],
@@ -158,8 +372,9 @@ class _SearchBarState extends State<SearchBar> {
 
   @override
   Widget build(BuildContext context) {
+    var queryData = MediaQuery.of(context);
     return Container(
-      padding: const EdgeInsets.only(top: 150),
+      padding: EdgeInsets.symmetric(vertical: queryData.size.height / 16),
       alignment: Alignment.topCenter,
       child: SizedBox(
         width: 300,

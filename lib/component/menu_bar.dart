@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:warnalertwithme/screen/pages/gMap.dart';
 
 import '../page/homepage.dart';
 import '../page/userProfile.dart';
@@ -22,7 +23,7 @@ class _DrawerBarState extends State<DrawerBar> {
         onTap: () {
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (context) => const HomePage(),
+              builder: (context) => const MapScreen(),
             ),
           );
         },
