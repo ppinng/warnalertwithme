@@ -262,104 +262,6 @@ class _SearchBarState extends State<SearchBar> {
                         ),
                       ),
                     );
-                    // Padding(
-                    //   padding: const EdgeInsets.all(8.0),
-                    //   child: Material(
-                    //     elevation: 6,
-                    //     borderRadius: BorderRadius.circular(15.0),
-                    //     child: Container(
-                    //       height: 130,
-                    //       decoration: BoxDecoration(
-                    //         color: Color(0xFFE0F4FF),
-                    //         borderRadius: BorderRadius.circular(15.0),
-                    //         border: Border.all(
-                    //           color: Color(0xFF76767676),
-                    //         ),
-                    //       ),
-                    //       child: Row(
-                    //         mainAxisAlignment: MainAxisAlignment.start,
-                    //         crossAxisAlignment: CrossAxisAlignment.start,
-                    //         children: [
-                    //           Padding(
-                    //             padding: const EdgeInsets.all(14.0),
-                    //             child: ClipRRect(
-                    //               borderRadius: BorderRadius.circular(20),
-                    //               child: Image.network(post['post_image']),
-                    //             ),
-                    //           ),
-                    //           Padding(
-                    //             padding:
-                    //                 const EdgeInsets.fromLTRB(15, 25, 0, 0),
-                    //             child: Text(
-                    //               post['post_detail'],
-                    //               style: TextStyle(
-                    //                 color: Color(0xFF767676),
-                    //               ),
-                    //             ),
-                    //           ),
-                    //           Align(
-
-                    //             alignment: Alignment.bottomRight,
-                    //             child: CircleAvatar(
-                    //                 backgroundImage:
-                    //                     NetworkImage(post['profile_image'])),
-                    //           )
-                    //           // Stack(
-                    //           //   clipBehavior: Clip.none,
-                    //           //   // mainAxisAlignment: MainAxisAlignment.end,
-                    //           //   // crossAxisAlignment: CrossAxisAlignment.end,
-                    //           //   children: [
-                    //           //     Positioned(
-                    //           //       bottom: 5,
-                    //           //       right: -50,
-                    //           //       child: Container(
-                    //           //         child: Text(timeAgo),
-                    //           //       ),
-                    //           //     ),
-                    //           //     Positioned(
-                    //           //       bottom: 5,
-                    //           //       right: -90,
-                    //           //       child: CircleAvatar(
-                    //           //         backgroundImage:
-                    //           //             NetworkImage(post['profile_image']),
-                    //           //       ),
-                    //           //     ),
-                    //           //     Column(
-                    //           //       mainAxisAlignment: MainAxisAlignment.end,
-                    //           //       crossAxisAlignment: CrossAxisAlignment.end,
-                    //           //       children: [
-                    //           //         // Container(
-                    //           //         //   child: Text(timeAgo),
-                    //           //         // ),
-                    //           //       ],
-                    //           //     ),
-                    //           //     // Container(
-                    //           //     //   child: CircleAvatar(
-                    //           //     //     backgroundImage:
-                    //           //     //         NetworkImage(post['profile_image']),
-                    //           //     //   ),
-                    //           //     // )
-                    //           //   ],
-                    //           // )
-                    //           // ListTile(
-                    //           //   // leading: Image.network(post['post_image']),
-                    //           //   title: Text(post['post_detail']),
-                    //           //   subtitle: Row(
-                    //           //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    //           //     children: [
-                    //           //       Text(timeAgo),
-                    //           //       CircleAvatar(
-                    //           //         backgroundImage:
-                    //           //             NetworkImage(post['profile_image']),
-                    //           //       ),
-                    //           //     ],
-                    //           //   ),
-                    //           // ),
-                    //         ],
-                    //       ),
-                    //     ),
-                    //   ),
-                    // );
                   },
                 ),
               ],
@@ -374,7 +276,7 @@ class _SearchBarState extends State<SearchBar> {
   Widget build(BuildContext context) {
     var queryData = MediaQuery.of(context);
     return Container(
-      padding: EdgeInsets.symmetric(vertical: queryData.size.height / 16),
+      padding: EdgeInsets.symmetric(vertical: queryData.size.height / 6),
       alignment: Alignment.topCenter,
       child: SizedBox(
         width: 300,
