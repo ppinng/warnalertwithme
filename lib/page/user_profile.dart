@@ -29,7 +29,7 @@ class _UserProfileState extends State<UserProfile> {
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
 
-      if (data.containsKey('user') && data.containsKey('pins')) {
+      if (data.containsKey('user')) {
         setState(() {
           _userData = Future.value(data);
         });
@@ -120,46 +120,52 @@ class _UserProfileState extends State<UserProfile> {
           } else if (snapshot.hasData) {
             userData = snapshot.data!['user'];
             final pins = snapshot.data!['pins'];
-
-            return ListView.builder(
-              itemCount: pins.length + 1,
-              itemBuilder: (context, index) {
-                if (index == 0) {
-                  // User details ListTile
-                  return ListTile(
-                    leading: CircleAvatar(
-                      backgroundImage:
-                          NetworkImage(userData?['profile_image'] ?? ''),
-                    ),
-                    title: Row(
-                      children: [
-                        Text(userData?['username'] ?? ''),
-                        IconButton(
-                          icon: const Icon(Icons.edit),
-                          onPressed: _showEditUsernameModal,
-                        ),
-                      ],
-                    ),
-                  );
-                } else {
-                  final pin = pins[index - 1];
-                  return ListTile(
-                    title: Text(pin['location_name']),
-                    subtitle: ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: pin['posts'].length,
+            print(pins.length);
+            return Column(
+              children: [
+                ListTile(
+                  leading: CircleAvatar(
+                    backgroundImage:
+                        NetworkImage(userData?['profile_image'] ?? ''),
+                  ),
+                  title: Row(
+                    children: [
+                      Text(userData?['username'] ?? ''),
+                      IconButton(
+                        icon: const Icon(Icons.edit),
+                        onPressed: _showEditUsernameModal,
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: Visibility(
+                    visible: pins.length != 0,
+                    replacement: const Center(child: Text('No posts')), //Change to something else, This will show when users did not yet create pins or posts
+                    child: ListView.builder(
+                      itemCount: pins.length,
                       itemBuilder: (context, index) {
-                        final post = pin['posts'][index];
+                        final pin = pins[index - 1];
                         return ListTile(
-                          leading: Image.network(post['post_image']),
-                          title: Text(post['post_detail']),
+                          title: Text(pin['location_name']),
+                          subtitle: ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: pin['posts'].length,
+                            itemBuilder: (context, index) {
+                              final post = pin['posts'][index];
+                              return ListTile(
+                                leading: Image.network(post['post_image']),
+                                title: Text(post['post_detail']),
+                              );
+                            },
+                          ),
                         );
                       },
                     ),
-                  );
-                }
-              },
+                  ),
+                ),
+              ],
             );
           } else {
             return const Center(child: Text('No user data found.'));
