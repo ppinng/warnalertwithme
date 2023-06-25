@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable, use_build_context_synchronously
+
 import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
@@ -5,36 +7,44 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:location/location.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:warnalertwithme/component/search.dart';
 
 // Define a Post model class to represent the structure of a post
 class Post {
+  final String postId;
   final String userId;
   final String pinId;
   final String detail;
   final String image;
   final String postedAt;
+  final String timeAgo;
 
   Post({
+    required this.postId,
     required this.userId,
     required this.pinId,
     required this.detail,
     required this.image,
     required this.postedAt,
+    required this.timeAgo,
   });
 
   factory Post.fromJson(Map<String, dynamic> json) {
     return Post(
+      postId: json['post_id'],
       userId: json['user_id'],
       pinId: json['pin_id'],
       detail: json['post_detail'],
       image: json['post_image'],
       postedAt: json['posted_at'],
+      timeAgo: json['time_ago'].toString(),
     );
   }
 }
@@ -56,6 +66,7 @@ class _MapScreenState extends State<MapScreen> {
   Set<Marker> _addMarkers = {};
   late SharedPreferences prefs;
   var myToken;
+  var userWhoLoggedIn;
 
   @override
   void initState() {
@@ -71,6 +82,7 @@ class _MapScreenState extends State<MapScreen> {
     Timer.periodic(const Duration(seconds: 30), (_) {
       getMarkerData();
     });
+    // extractUserIdFromToken();
   }
 
   void initSharedPref() async {
@@ -121,16 +133,101 @@ class _MapScreenState extends State<MapScreen> {
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(
-                        title: Text(marker.infoWindow.title ?? ''),
-                        content: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
+                        backgroundColor:
+                            const Color.fromARGB(255, 224, 244, 255),
+                        content: Container(
+                          width: 383.0, // Set the desired width
+                          height: 90.0, // Set the desired height
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Padding(
+                                padding: EdgeInsets.only(
+                                    bottom: 10.0), // Add padding to the bottom
+                                child: Text(
+                                  'Confirm to remove the marker ?',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 18.0, // Set the desired font size
+                                  ),
+                                ),
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      _deleteMarker(specifyId);
+                                      getMarkerData();
+                                      Navigator.pop(context);
+                                    },
+                                    style: ButtonStyle(
+                                      padding: MaterialStateProperty.all<
+                                          EdgeInsetsGeometry>(
+                                        const EdgeInsets.symmetric(
+                                            vertical: 12.0,
+                                            horizontal:
+                                                45.0), // Adjust the padding
+                                      ),
+                                      backgroundColor:
+                                          MaterialStateProperty.all<Color>(
+                                              const Color.fromARGB(
+                                                  255, 33, 150, 243)),
+                                      shape: MaterialStateProperty.all<
+                                          RoundedRectangleBorder>(
+                                        RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(50.0),
+                                        ),
+                                      ),
+                                    ),
+                                    child: const Text(
+                                      'Yes',
+                                      style: TextStyle(
+                                          fontSize:
+                                              13.0), // Set the desired font size
+                                    ),
+                                  ),
+                                  const SizedBox(width: 30.0),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.of(context)
+                                          .pop(); // Close the dialog
+                                    },
+                                    style: ButtonStyle(
+                                      padding: MaterialStateProperty.all<
+                                          EdgeInsetsGeometry>(
+                                        const EdgeInsets.symmetric(
+                                            vertical: 12.0,
+                                            horizontal:
+                                                50.0), // Adjust the padding
+                                      ),
+                                      backgroundColor:
+                                          MaterialStateProperty.all<Color>(
+                                              Colors.red),
+                                      shape: MaterialStateProperty.all<
+                                          RoundedRectangleBorder>(
+                                        RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(45.0),
+                                        ),
+                                      ),
+                                    ),
+                                    child: const Text(
+                                      'No',
+                                      style: TextStyle(
+                                          fontSize:
+                                              13.0), // Set the desired font size
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
-                          onPressed: () {
-                            _deleteMarker(specifyId);
-                            Navigator.pop(context);
-                          },
-                          child: const Text('Delete'),
                         ),
                       );
                     },
@@ -142,7 +239,7 @@ class _MapScreenState extends State<MapScreen> {
                     .firstWhere((marker) => marker.markerId == markerId);
                 // fetchPostsByPinId(specifyId);
                 print('Retrieved pins id: $specifyId');
-                _addInformation(specifyId, specify['address']);
+                _slidePopup(specifyId, specify['address']);
               }
             },
           ),
@@ -159,6 +256,211 @@ class _MapScreenState extends State<MapScreen> {
       print('Retrieved pins data: $pins');
     } else {
       throw Exception('Failed to retrieve pins data');
+    }
+  }
+
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  TextEditingController postDetailCon = TextEditingController();
+
+  void _createPostPopup(String desiredPinId, String locationName) {
+    showDialog(
+      barrierDismissible: true,
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          contentPadding: const EdgeInsets.fromLTRB(24.0, 20.0, 24.0, 0.0),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          ),
+          content: SizedBox(
+            width: 350.0,
+            height: 455.0,
+            child: Stack(
+              // crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Positioned(
+                  top: -10,
+                  right: 0,
+                  child: IconButton(
+                    icon: const Icon(
+                      Icons.close,
+                      size: 50.0,
+                      color: Colors.blue,
+                    ),
+                    onPressed: () {
+                      _cancelCreatePosts();
+                    },
+                  ),
+                ),
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
+                        child: Text(
+                          locationName,
+                          style: const TextStyle(
+                            fontSize: 15.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 5.0),
+                      const Divider(
+                        thickness: 1.0,
+                        color: Colors.grey,
+                      ),
+                      const SizedBox(height: 15.0),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 224, 244, 255),
+                          border: Border.all(
+                            color: const Color.fromARGB(255, 0, 0, 0),
+                            width: 1.0,
+                          ),
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
+                        padding: const EdgeInsets.fromLTRB(70, 25, 70, 25),
+                        child: GestureDetector(
+                          onTap: () {
+                            _getImageFromGallery();
+                          },
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                pickedFile == null ? "Picture is required" : "",
+                                style: TextStyle(
+                                  fontSize: pickedFile == null ? 14.0 : 14.0,
+                                ),
+                              ),
+                              _buildImageWidget(),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 1.0),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 10.0),
+                          TextFormField(
+                            controller: postDetailCon,
+                            decoration: InputDecoration(
+                              labelText: 'Description (require)',
+                              helperText: '    ',
+                              filled: true,
+                              fillColor:
+                                  const Color.fromARGB(255, 224, 244, 255),
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(15)),
+                              hintText: 'Tell us about this location..',
+                              hintStyle: const TextStyle(fontSize: 12.0),
+                            ),
+                            maxLines: null,
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return 'Description is required.';
+                              }
+                              return null;
+                            },
+                          )
+                        ],
+                      ),
+                      const SizedBox(height: 0.0),
+                      Container(
+                        alignment: Alignment.bottomCenter,
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                          child: SizedBox(
+                            width: 100, // Set the desired width
+                            height: 40, // Set the desired height
+                            child: ElevatedButton(
+                              onPressed: () {
+                                if ((_formKey.currentState?.validate() ??
+                                        false) &&
+                                    pickedFile != null) {
+                                  String postDetail = postDetailCon.text;
+                                  _addPosts(
+                                      desiredPinId, pickedFile, postDetail);
+                                  Navigator.pop(context);
+                                  Future.delayed(const Duration(seconds: 1),
+                                      () {
+                                    _slidePopup(desiredPinId, locationName);
+                                  });
+                                }
+                              },
+                              style: ButtonStyle(
+                                shape: MaterialStateProperty.all<
+                                    RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.circular(99999.0),
+                                  ),
+                                ),
+                              ),
+                              child: const Text(
+                                'Add Post',
+                                style: TextStyle(fontSize: 13),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _addPosts(
+      String pinId, PlatformFile? pickedFile, String postDetail) async {
+    try {
+      final postsUrl = 'http://10.0.2.2:3000/api/posts';
+
+      if (pickedFile != null) {
+        FirebaseStorage storage = FirebaseStorage.instance;
+        Reference storageRef = storage
+            .ref()
+            .child('images/${DateTime.now().millisecondsSinceEpoch}');
+
+        final metadata = SettableMetadata(
+          contentType: 'image/jpeg',
+        );
+
+        uploadTask = storageRef.putFile(
+          File(pickedFile.path!),
+          metadata,
+        );
+
+        final TaskSnapshot snapshot = await uploadTask!.whenComplete(() {});
+        final downloadURL = await snapshot.ref.getDownloadURL();
+        final postResponse = await http.post(
+          Uri.parse(postsUrl),
+          headers: {'authorization': 'Bearer $myToken'},
+          body: {
+            'pin_id': pinId,
+            'post_detail': postDetail,
+            'post_image': downloadURL,
+          },
+        );
+
+        if (postResponse.statusCode == 200) {
+          // Post created successfully
+          print('Post created successfully');
+          Navigator.pop(context);
+        }
+      }
+    } catch (error) {
+      print('Error: $error');
     }
   }
 
@@ -339,14 +641,46 @@ class _MapScreenState extends State<MapScreen> {
     }
   }
 
-  void _addInformation(String specifyId, String location_name) async {
+  void extractUserIdFromToken() {
+    Map<String, dynamic> decodedToken = JwtDecoder.decode(myToken);
+
+    // Assuming the user ID is stored in the 'user_id' claim of the token
+    userWhoLoggedIn = decodedToken['user_id'];
+  }
+
+  void _showCannotEditMessage() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30),
+          ),
+          title: const Text("Cannot Edit Post"),
+          content: const Text("You do not have permission to edit this post."),
+          actions: <Widget>[
+            TextButton(
+              child: const Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  List<Post> posts = [];
+  void _slidePopup(String specifyId, String location_name) async {
     final desiredPinId = specifyId;
     print(desiredPinId);
     setState(() {
+      extractUserIdFromToken();
       _editingMode = false;
     });
 
-    final List<Post> posts = await fetchPostsByPinId(desiredPinId);
+    posts = await fetchPostsByPinId(desiredPinId);
 
     showModalBottomSheet(
       shape: const RoundedRectangleBorder(
@@ -365,19 +699,19 @@ class _MapScreenState extends State<MapScreen> {
                   Container(
                     alignment: Alignment.topCenter,
                     child: Padding(
-                      padding: EdgeInsets.only(top: 16),
+                      padding: const EdgeInsets.only(top: 16),
                       child: Column(
                         children: [
                           IconButton(
                               onPressed: () {
                                 Navigator.pop(context);
                               },
-                              icon: FaIcon(FontAwesomeIcons.angleDown)),
+                              icon: const FaIcon(FontAwesomeIcons.angleDown)),
                           Padding(
-                            padding: EdgeInsets.only(top: 5),
+                            padding: const EdgeInsets.only(top: 5),
                             child: Text(
                               location_name,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Color.fromARGB(255, 33, 150, 243),
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
@@ -403,7 +737,14 @@ class _MapScreenState extends State<MapScreen> {
                           // Check if the current post has the same pin_id
                           if (posts[index].pinId == desiredPinId) {
                             return GestureDetector(
-                              onTap: _showPostPopup,
+                              onTap: () {
+                                if (userWhoLoggedIn == posts[index].userId) {
+                                  _showPostPopup(posts[index], location_name);
+                                } else {
+                                  print(userWhoLoggedIn);
+                                  _showCannotEditMessage();
+                                }
+                              },
                               child: Padding(
                                 padding: const EdgeInsets.all(10),
                                 child: Container(
@@ -531,9 +872,8 @@ class _MapScreenState extends State<MapScreen> {
                                               ],
                                             ),
                                             child: Text(
-                                              posts[index].postedAt.substring(
-                                                  0, 10), // Use post time
-                                              style: TextStyle(
+                                              posts[index].timeAgo,
+                                              style: const TextStyle(
                                                 fontSize: 10,
                                                 color: Color.fromARGB(
                                                     147, 118, 118, 229),
@@ -564,7 +904,9 @@ class _MapScreenState extends State<MapScreen> {
                 width: 39,
                 height: 39,
                 child: FloatingActionButton(
-                  onPressed: _showPostPopup,
+                  onPressed: () {
+                    _createPostPopup(desiredPinId, location_name);
+                  },
                   backgroundColor: Colors.blue,
                   child: const Icon(
                     Icons.add,
@@ -580,11 +922,14 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
-  void _showPostPopup() {
+  void _showPostPopup(Post post, String locationName) {
     showDialog(
-      // barrierDismissible: false,
+      barrierDismissible: false,
       context: context,
       builder: (context) {
+        TextEditingController descriptionController =
+            TextEditingController(text: post.detail);
+
         return AlertDialog(
           contentPadding: const EdgeInsets.fromLTRB(24.0, 20.0, 24.0, 0.0),
           shape: RoundedRectangleBorder(
@@ -592,185 +937,189 @@ class _MapScreenState extends State<MapScreen> {
           ),
           content: SizedBox(
             width: 350.0,
-            height: 420.0,
+            height: 507.77,
             child: Stack(
+              // crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Positioned(
-                //   top: -10,
-                //   right: 0,
-                //   child: IconButton(
-                //     icon: const Icon(
-                //       Icons.close,
-                //       size: 50.0,
-                //       color: Colors.blue,
-                //     ),
-                //     onPressed: _cancelCreatePin,
-                //   ),
-                // ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const SizedBox(height: 20.0),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 224, 244, 255),
-                        border: Border.all(
-                          color: const Color.fromARGB(255, 0, 0, 0),
-                          width: 1.0,
-                        ),
-                        borderRadius: BorderRadius.circular(15.0),
-                      ),
-                      padding: const EdgeInsets.fromLTRB(70, 25, 70, 25),
-                      child: GestureDetector(
-                        onTap: () {},
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            // const SizedBox(height: 10.0),
-                            Image.asset(
-                              'assets/images/upload pic.png',
-                              width: 100.0,
-                              height: 100.0,
-                            ),
-                          ],
-                        ),
-                      ),
+                Positioned(
+                  top: -10,
+                  right: 0,
+                  child: IconButton(
+                    icon: const Icon(
+                      Icons.close,
+                      size: 50.0,
+                      color: Colors.blue,
                     ),
-                    const SizedBox(height: 13.0),
-                    Container(
-                      width: 244,
-                      height: 67,
-                      decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 224, 244, 255),
-                        border: Border.all(
-                          color: const Color.fromARGB(255, 0, 0, 0),
-                          width: 1.0,
-                        ),
-                        borderRadius: BorderRadius.circular(15.0),
-                      ),
-                      padding: const EdgeInsets.fromLTRB(19, 10, 0, 10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Name (require)',
-                            style: TextStyle(
-                              fontSize: 12.0,
-                              color: Color(0xFF4D8CFE),
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 10.0),
-                          Expanded(
-                            child: TextFormField(
-                              decoration: const InputDecoration.collapsed(
-                                hintText: 'Show name of location',
-                                hintStyle: TextStyle(fontSize: 12.0),
-                              ),
-                              maxLines: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 13.0),
-                    Container(
-                      width: 244,
-                      height: 67,
-                      decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 224, 244, 255),
-                        border: Border.all(
-                          color: const Color.fromARGB(255, 0, 0, 0),
-                          width: 1.0,
-                        ),
-                        borderRadius: BorderRadius.circular(15.0),
-                      ),
-                      padding: const EdgeInsets.fromLTRB(19, 10, 0, 10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Description (require)',
-                            style: TextStyle(
-                              fontSize: 12.0,
-                              color: Color(0xFF4D8CFE),
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 10.0),
-                          Expanded(
-                            child: TextFormField(
-                              decoration: const InputDecoration.collapsed(
-                                hintText: 'Tell us about this location..',
-                                hintStyle: TextStyle(fontSize: 12.0),
-                              ),
-                              maxLines: null,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 13.0),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          style: ButtonStyle(
-                            padding:
-                                MaterialStateProperty.all<EdgeInsetsGeometry>(
-                              const EdgeInsets.symmetric(
-                                  vertical: 12.0,
-                                  horizontal: 35.0), // Adjust the padding
-                            ),
-                            backgroundColor: MaterialStateProperty.all<Color>(
-                                const Color.fromARGB(255, 33, 150, 243)),
-                            shape: MaterialStateProperty.all<
-                                RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(50.0),
-                              ),
-                            ),
-                          ),
-                          child: const Text(
-                            'Update',
-                            style: TextStyle(
-                                fontSize: 13.0), // Set the desired font size
-                          ),
-                        ),
-                        const SizedBox(width: 30.0),
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.of(context).pop(); // Close the dialog
-                          },
-                          style: ButtonStyle(
-                            padding:
-                                MaterialStateProperty.all<EdgeInsetsGeometry>(
-                              const EdgeInsets.symmetric(
-                                  vertical: 12.0,
-                                  horizontal: 35.0), // Adjust the padding
-                            ),
-                            backgroundColor:
-                                MaterialStateProperty.all<Color>(Colors.red),
-                            shape: MaterialStateProperty.all<
-                                RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(45.0),
-                              ),
-                            ),
-                          ),
-                          child: const Text(
-                            'Delete',
-                            style: TextStyle(
-                                fontSize: 13.0), // Set the desired font size
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+                    onPressed: () {
+                      _cancelCreatePosts();
+                    },
+                  ),
                 ),
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
+                        child: Text(
+                          locationName,
+                          style: const TextStyle(
+                            fontSize: 15.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 5.0),
+                      const Divider(
+                        thickness: 1.0,
+                        color: Colors.grey,
+                      ),
+                      const SizedBox(height: 15.0),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 224, 244, 255),
+                          border: Border.all(
+                            color: const Color.fromARGB(255, 0, 0, 0),
+                            width: 1.0,
+                          ),
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
+                        padding: const EdgeInsets.fromLTRB(70, 25, 70, 25),
+                        child: GestureDetector(
+                          onTap: _getImageFromGallery,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              if (pickedFile != null)
+                                SizedBox(
+                                  width: 100.0,
+                                  height: 100.0,
+                                  child: Image.file(
+                                    File(pickedFile!.path!),
+                                    fit: BoxFit.cover,
+                                  ),
+                                )
+                              else
+                                Image.network(
+                                  post.image,
+                                  width: 100.0,
+                                  height: 100.0,
+                                ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 1.0),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 10.0),
+                          TextFormField(
+                            controller: descriptionController,
+                            decoration: InputDecoration(
+                              labelText: 'Description (require)',
+                              helperText: '    ',
+                              filled: true,
+                              fillColor:
+                                  const Color.fromARGB(255, 224, 244, 255),
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(15)),
+                              hintText: 'Tell us about this location..',
+                              hintStyle: const TextStyle(fontSize: 12.0),
+                            ),
+                            maxLines: null,
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return 'Description is required.';
+                              }
+                              return null;
+                            },
+                          )
+                        ],
+                      ),
+                      const SizedBox(height: 13.0),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {
+                              String updatedDescription =
+                                  descriptionController.text;
+                              // Perform the update operation
+                              if (pickedFile != null) {
+                                updatePostWithNewImage(post.postId,
+                                    updatedDescription, pickedFile);
+                              } else {
+                                updatePostWithOutImage(
+                                    post.postId, updatedDescription);
+                              }
+                              Navigator.pop(context);
+                              Navigator.pop(context);
+                              Future.delayed(const Duration(seconds: 1), () {
+                                _slidePopup(post.pinId, locationName);
+                              });
+                            },
+                            style: ButtonStyle(
+                              padding:
+                                  MaterialStateProperty.all<EdgeInsetsGeometry>(
+                                const EdgeInsets.symmetric(
+                                    vertical: 12.0,
+                                    horizontal: 35.0), // Adjust the padding
+                              ),
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                  const Color.fromARGB(255, 33, 150, 243)),
+                              shape: MaterialStateProperty.all<
+                                  RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(50.0),
+                                ),
+                              ),
+                            ),
+                            child: const Text(
+                              'Update',
+                              style: TextStyle(
+                                  fontSize: 13.0), // Set the desired font size
+                            ),
+                          ),
+                          const SizedBox(width: 30.0),
+                          ElevatedButton(
+                            onPressed: () async {
+                              // Perform the delete operation
+                              await deletePost(post.postId);
+                              Navigator.pop(context);
+                              Navigator.pop(context);
+                              Future.delayed(const Duration(seconds: 1), () {
+                                _slidePopup(post.pinId, locationName);
+                              });
+                            },
+                            style: ButtonStyle(
+                              padding:
+                                  MaterialStateProperty.all<EdgeInsetsGeometry>(
+                                const EdgeInsets.symmetric(
+                                    vertical: 12.0,
+                                    horizontal: 35.0), // Adjust the padding
+                              ),
+                              backgroundColor:
+                                  MaterialStateProperty.all<Color>(Colors.red),
+                              shape: MaterialStateProperty.all<
+                                  RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(45.0),
+                                ),
+                              ),
+                            ),
+                            child: const Text(
+                              'Delete',
+                              style: TextStyle(
+                                  fontSize: 13.0), // Set the desired font size
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                )
               ],
             ),
           ),
@@ -779,29 +1128,104 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
-  // void _addPosts(PlatformFile? pickedFile, String postDetail) async {
-  //   try {
-  //     final postsUrl = 'http://10.0.2.2:3000/api/posts';
+  Future<void> updatePostWithOutImage(String postId, String postDetail) async {
+    try {
+      // Prepare the request URL with the postId
+      String url = 'http://10.0.2.2:3000/api/posts/$postId';
+      Map<String, String> body = {
+        'post_detail': postDetail,
+      };
 
-  //     // Step 1: Add a new pin
-  //     final postResponse = await http.post(
-  //       Uri.parse(postsUrl),
-  //       headers: {'authorization': 'Bearer $myToken'},
-  //       body: {
-  //         'pin_id': pinId,
-  //         'post_detail': postDetail,
-  //         'post_image': downloadURL,
-  //       },
-  //     );
+      // Send the PUT request to update the post
+      http.Response response = await http.put(
+        headers: {'authorization': 'Bearer $myToken'},
+        Uri.parse(url),
+        body: body,
+      );
 
-  //     if (postResponse.statusCode == 200) {
-  //       // Post created successfully
-  //       print('Post created successfully');
-  //     }
-  //   } catch (error) {
-  //     print('Error: $error');
-  //   }
-  // }
+      // Check the response status code
+      if (response.statusCode == 200) {
+        // Post updated successfully
+        print('Post updated successfully');
+      } else {
+        // Failed to update the post
+        print('Failed to update the post. Status code: ${response.statusCode}');
+      }
+    } catch (error) {
+      // Error occurred while updating the post
+      print('Error updating the post: $error');
+    }
+  }
+
+  Future<void> updatePostWithNewImage(
+      String postId, String postDetail, PlatformFile? pickedFile) async {
+    try {
+      // Prepare the request URL with the postId
+      String url = 'http://10.0.2.2:3000/api/posts/$postId';
+
+      if (pickedFile != null) {
+        FirebaseStorage storage = FirebaseStorage.instance;
+        Reference storageRef = storage
+            .ref()
+            .child('images/${DateTime.now().millisecondsSinceEpoch}');
+
+        final metadata = SettableMetadata(
+          contentType: 'image/jpeg',
+        );
+
+        uploadTask = storageRef.putFile(
+          File(pickedFile.path!),
+          metadata,
+        );
+
+        final TaskSnapshot snapshot = await uploadTask!.whenComplete(() {});
+        final downloadURL = await snapshot.ref.getDownloadURL();
+        // Prepare the request body with the updated postDetail and postImage
+        Map<String, String> body = {
+          'post_detail': postDetail,
+          'post_image': downloadURL,
+        };
+
+        // Send the PUT request to update the post
+        http.Response response = await http.put(
+          headers: {'authorization': 'Bearer $myToken'},
+          Uri.parse(url),
+          body: body,
+        );
+
+        // Check the response status code
+        if (response.statusCode == 200) {
+          // Post updated successfully
+          print('Post updated successfully');
+        } else {
+          // Failed to update the post
+          print(
+              'Failed to update the post. Status code: ${response.statusCode}');
+        }
+      }
+    } catch (error) {
+      // Error occurred while updating the post
+      print('Error updating the post: $error');
+    }
+  }
+
+// Function to delete the post
+  Future<void> deletePost(String postId) async {
+    final url = 'http://10.0.2.2:3000/api/posts/$postId';
+    final response = await http.delete(
+      Uri.parse(url),
+    );
+
+    // Check the response status code
+    if (response.statusCode == 200) {
+      print('Post successfully deleted');
+    } else if (response.statusCode == 404) {
+      print('Post not found');
+    } else {
+      print('Error deleting Post');
+      print('Response body: ${response.body}');
+    }
+  }
 
   TextEditingController locationController = TextEditingController();
   TextEditingController postDetailController = TextEditingController();
@@ -1107,6 +1531,14 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
+  void _cancelCreatePosts() {
+    setState(() {
+      Navigator.pop(context);
+      postDetailCon.clear();
+      pickedFile = null;
+    });
+  }
+
   void _cancelCreatePin() {
     setState(() {
       Navigator.pop(context);
@@ -1217,6 +1649,7 @@ class _MapScreenState extends State<MapScreen> {
                     ),
             ),
           ),
+          const SearchBar(),
         ],
       ),
     );
