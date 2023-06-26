@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -14,8 +15,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:warnalertwithme/component/search.dart';
-
-import '../../component/menu_bar.dart';
+import 'package:warnalertwithme/page/user_profile.dart';
 
 // Define a Post model class to represent the structure of a post
 class Post {
@@ -59,15 +59,16 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> {
   GoogleMapController? _mapController;
-  final Location _location = Location();
+  Location _location = Location();
   LocationData? _currentLocation;
   bool _editingMode = false;
   Set<Marker> _markers = {};
-  final Set<Marker> _selectedMarkers = <Marker>{};
-  final Set<Marker> _addMarkers = {};
+  Set<Marker> _selectedMarkers = Set<Marker>();
+  Set<Marker> _addMarkers = {};
   late SharedPreferences prefs;
   var myToken;
   var userWhoLoggedIn;
+  String? userImage;
 
   @override
   void initState() {
@@ -83,7 +84,9 @@ class _MapScreenState extends State<MapScreen> {
     Timer.periodic(const Duration(seconds: 30), (_) {
       getMarkerData();
     });
-    // extractUserIdFromToken();
+    Future.delayed(const Duration(seconds: 1), () {
+      extractUserIdFromToken();
+    });
   }
 
   void initSharedPref() async {
@@ -93,7 +96,7 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   void getMarkerData() async {
-    const url = 'http://10.0.2.2:3000/api/pins';
+    final url = 'http://10.0.2.2:3000/api/pins';
 
     final response = await http.get(Uri.parse(url));
 
@@ -129,108 +132,111 @@ class _MapScreenState extends State<MapScreen> {
                 Marker? marker = _markers
                     .firstWhere((marker) => marker.markerId == markerId);
 
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15.0),
-                      ),
-                      backgroundColor: const Color.fromARGB(255, 224, 244, 255),
-                      content: SizedBox(
-                        width: 383.0, // Set the desired width
-                        height: 90.0, // Set the desired height
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Padding(
-                              padding: EdgeInsets.only(
-                                  bottom: 10.0), // Add padding to the bottom
-                              child: Text(
-                                'Confirm to remove the marker ?',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 18.0, // Set the desired font size
+                if (marker != null) {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
+                        backgroundColor:
+                            const Color.fromARGB(255, 224, 244, 255),
+                        content: Container(
+                          width: 383.0, // Set the desired width
+                          height: 90.0, // Set the desired height
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Padding(
+                                padding: EdgeInsets.only(
+                                    bottom: 10.0), // Add padding to the bottom
+                                child: Text(
+                                  'Confirm to remove the marker ?',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 18.0, // Set the desired font size
+                                  ),
                                 ),
                               ),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                ElevatedButton(
-                                  onPressed: () {
-                                    _deleteMarker(specifyId);
-                                    getMarkerData();
-                                    Navigator.pop(context);
-                                  },
-                                  style: ButtonStyle(
-                                    padding: MaterialStateProperty.all<
-                                        EdgeInsetsGeometry>(
-                                      const EdgeInsets.symmetric(
-                                          vertical: 12.0,
-                                          horizontal:
-                                              45.0), // Adjust the padding
-                                    ),
-                                    backgroundColor:
-                                        MaterialStateProperty.all<Color>(
-                                            const Color.fromARGB(
-                                                255, 33, 150, 243)),
-                                    shape: MaterialStateProperty.all<
-                                        RoundedRectangleBorder>(
-                                      RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(50.0),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      _deleteMarker(specifyId);
+                                      getMarkerData();
+                                      Navigator.pop(context);
+                                    },
+                                    style: ButtonStyle(
+                                      padding: MaterialStateProperty.all<
+                                          EdgeInsetsGeometry>(
+                                        const EdgeInsets.symmetric(
+                                            vertical: 12.0,
+                                            horizontal:
+                                                45.0), // Adjust the padding
+                                      ),
+                                      backgroundColor:
+                                          MaterialStateProperty.all<Color>(
+                                              const Color.fromARGB(
+                                                  255, 33, 150, 243)),
+                                      shape: MaterialStateProperty.all<
+                                          RoundedRectangleBorder>(
+                                        RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(50.0),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  child: const Text(
-                                    'Yes',
-                                    style: TextStyle(
-                                        fontSize:
-                                            13.0), // Set the desired font size
-                                  ),
-                                ),
-                                const SizedBox(width: 30.0),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.of(context)
-                                        .pop(); // Close the dialog
-                                  },
-                                  style: ButtonStyle(
-                                    padding: MaterialStateProperty.all<
-                                        EdgeInsetsGeometry>(
-                                      const EdgeInsets.symmetric(
-                                          vertical: 12.0,
-                                          horizontal:
-                                              50.0), // Adjust the padding
+                                    child: const Text(
+                                      'Yes',
+                                      style: TextStyle(
+                                          fontSize:
+                                              13.0), // Set the desired font size
                                     ),
-                                    backgroundColor:
-                                        MaterialStateProperty.all<Color>(
-                                            Colors.red),
-                                    shape: MaterialStateProperty.all<
-                                        RoundedRectangleBorder>(
-                                      RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(45.0),
+                                  ),
+                                  const SizedBox(width: 30.0),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.of(context)
+                                          .pop(); // Close the dialog
+                                    },
+                                    style: ButtonStyle(
+                                      padding: MaterialStateProperty.all<
+                                          EdgeInsetsGeometry>(
+                                        const EdgeInsets.symmetric(
+                                            vertical: 12.0,
+                                            horizontal:
+                                                50.0), // Adjust the padding
+                                      ),
+                                      backgroundColor:
+                                          MaterialStateProperty.all<Color>(
+                                              Colors.red),
+                                      shape: MaterialStateProperty.all<
+                                          RoundedRectangleBorder>(
+                                        RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(45.0),
+                                        ),
                                       ),
                                     ),
+                                    child: const Text(
+                                      'No',
+                                      style: TextStyle(
+                                          fontSize:
+                                              13.0), // Set the desired font size
+                                    ),
                                   ),
-                                  child: const Text(
-                                    'No',
-                                    style: TextStyle(
-                                        fontSize:
-                                            13.0), // Set the desired font size
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                );
+                      );
+                    },
+                  );
+                }
               } else {
                 // Find the corresponding marker
                 Marker? marker = _markers
@@ -251,7 +257,7 @@ class _MapScreenState extends State<MapScreen> {
         _markers = newMarkers;
       });
 
-      //print('Retrieved pins data: $pins');
+      print('Retrieved pins data: $pins');
     } else {
       throw Exception('Failed to retrieve pins data');
     }
@@ -265,164 +271,209 @@ class _MapScreenState extends State<MapScreen> {
     showDialog(
       barrierDismissible: true,
       context: context,
-      builder: (context) {
-        return AlertDialog(
-          contentPadding: const EdgeInsets.fromLTRB(24.0, 20.0, 24.0, 0.0),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20.0),
-          ),
-          content: SizedBox(
-            width: 350.0,
-            height: 455.0,
-            child: Stack(
-              // crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Positioned(
-                  top: -10,
-                  right: 0,
-                  child: IconButton(
-                    icon: const Icon(
-                      Icons.close,
-                      size: 50.0,
-                      color: Colors.blue,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+          return AlertDialog(
+            contentPadding: const EdgeInsets.fromLTRB(24.0, 20.0, 24.0, 0.0),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20.0),
+            ),
+            content: SizedBox(
+              width: 350.0,
+              height: 455.0,
+              child: Stack(
+                // crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Positioned(
+                    top: -10,
+                    right: 0,
+                    child: IconButton(
+                      icon: const Icon(
+                        Icons.close,
+                        size: 50.0,
+                        color: Colors.blue,
+                      ),
+                      onPressed: () {
+                        _cancelCreatePosts();
+                      },
                     ),
-                    onPressed: () {
-                      _cancelCreatePosts();
-                    },
                   ),
-                ),
-                Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
-                        child: Text(
-                          locationName,
-                          style: const TextStyle(
-                            fontSize: 15.0,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 5.0),
-                      const Divider(
-                        thickness: 1.0,
-                        color: Colors.grey,
-                      ),
-                      const SizedBox(height: 15.0),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: const Color.fromARGB(255, 224, 244, 255),
-                          border: Border.all(
-                            color: const Color.fromARGB(255, 0, 0, 0),
-                            width: 1.0,
-                          ),
-                          borderRadius: BorderRadius.circular(15.0),
-                        ),
-                        padding: const EdgeInsets.fromLTRB(70, 25, 70, 25),
-                        child: GestureDetector(
-                          onTap: () {
-                            _getImageFromGallery();
-                          },
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                pickedFile == null ? "Picture is required" : "",
-                                style: TextStyle(
-                                  fontSize: pickedFile == null ? 14.0 : 14.0,
-                                ),
-                              ),
-                              _buildImageWidget(),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 1.0),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 10.0),
-                          TextFormField(
-                            controller: postDetailCon,
-                            decoration: InputDecoration(
-                              labelText: 'Description (require)',
-                              helperText: '    ',
-                              filled: true,
-                              fillColor:
-                                  const Color.fromARGB(255, 224, 244, 255),
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15)),
-                              hintText: 'Tell us about this location..',
-                              hintStyle: const TextStyle(fontSize: 12.0),
+                  Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
+                          child: Text(
+                            locationName,
+                            style: const TextStyle(
+                              fontSize: 15.0,
+                              fontWeight: FontWeight.bold,
                             ),
-                            maxLines: null,
-                            validator: (value) {
-                              if (value!.isEmpty) {
-                                return 'Description is required.';
-                              }
-                              return null;
+                          ),
+                        ),
+                        const SizedBox(height: 5.0),
+                        const Divider(
+                          thickness: 1.0,
+                          color: Colors.grey,
+                        ),
+                        const SizedBox(height: 15.0),
+                        Text(
+                          pickedFile == null ? "Picture is required" : "",
+                          style: TextStyle(
+                            fontSize: pickedFile == null ? 14.0 : 14.0,
+                          ),
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: const Color.fromARGB(255, 224, 244, 255),
+                            border: Border.all(
+                              color: const Color.fromARGB(255, 0, 0, 0),
+                              width: 1.0,
+                            ),
+                            borderRadius: BorderRadius.circular(15.0),
+                          ),
+                          padding: const EdgeInsets.fromLTRB(70, 25, 70, 25),
+                          child: ElevatedButton(
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                const Color.fromARGB(255, 224, 244, 255),
+                              ),
+                              elevation: MaterialStateProperty.all<double>(
+                                  0), // Set elevation to 0 to remove the button's shadow
+                              shadowColor: MaterialStateProperty.all<Color>(Colors
+                                  .transparent), // Set shadowColor to transparent to remove the button's shadow
+                            ),
+                            onPressed: () async {
+                              await _getImageFromGallery();
+                              setState(() {});
                             },
-                          )
-                        ],
-                      ),
-                      const SizedBox(height: 0.0),
-                      Container(
-                        alignment: Alignment.bottomCenter,
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                          child: SizedBox(
-                            width: 100, // Set the desired width
-                            height: 40, // Set the desired height
-                            child: ElevatedButton(
-                              onPressed: () {
-                                if ((_formKey.currentState?.validate() ??
-                                        false) &&
-                                    pickedFile != null) {
-                                  String postDetail = postDetailCon.text;
-                                  _addPosts(
-                                      desiredPinId, pickedFile, postDetail);
-                                  Navigator.pop(context);
-                                  Future.delayed(const Duration(seconds: 1),
-                                      () {
-                                    _slidePopup(desiredPinId, locationName);
-                                  });
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                _buildImageWidget(),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 1.0),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 10.0),
+                            TextFormField(
+                              controller: postDetailCon,
+                              decoration: InputDecoration(
+                                labelText: 'Description (require)',
+                                helperText: '    ',
+                                filled: true,
+                                fillColor:
+                                    const Color.fromARGB(255, 224, 244, 255),
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(15)),
+                                hintText: 'Tell us about this location..',
+                                hintStyle: const TextStyle(fontSize: 12.0),
+                              ),
+                              maxLines: null,
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return 'Description is required.';
                                 }
+                                return null;
                               },
-                              style: ButtonStyle(
-                                shape: MaterialStateProperty.all<
-                                    RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.circular(99999.0),
+                            )
+                          ],
+                        ),
+                        const SizedBox(height: 0.0),
+                        Container(
+                          alignment: Alignment.bottomCenter,
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                            child: SizedBox(
+                              width: 100, // Set the desired width
+                              height: 40, // Set the desired height
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  if ((_formKey.currentState?.validate() ??
+                                          false) &&
+                                      pickedFile != null) {
+                                    String postDetail = postDetailCon.text;
+                                    _addPosts(
+                                        desiredPinId, pickedFile, postDetail);
+                                    _cancelCreatePosts();
+                                    Future.delayed(const Duration(seconds: 2),
+                                        () {
+                                      _slidePopup(desiredPinId, locationName);
+                                    });
+                                  }
+                                },
+                                style: ButtonStyle(
+                                  shape: MaterialStateProperty.all<
+                                      RoundedRectangleBorder>(
+                                    RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(99999.0),
+                                    ),
                                   ),
                                 ),
-                              ),
-                              child: const Text(
-                                'Add Post',
-                                style: TextStyle(fontSize: 13),
+                                child: const Text(
+                                  'Add Post',
+                                  style: TextStyle(fontSize: 13),
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                )
-              ],
+                      ],
+                    ),
+                  )
+                ],
+              ),
             ),
-          ),
-        );
+          );
+        });
       },
     );
+  }
+
+  Widget _buildImageWidget() {
+    if (pickedFile == null) {
+      return Image.asset(
+        'assets/images/upload pic.png',
+        width: 100.0,
+        height: 100.0,
+      );
+    } else {
+      final file = File(pickedFile!.path!);
+      return Image.file(
+        file,
+        width: 100.0,
+        height: 100.0,
+      );
+    }
+  }
+
+//Pick Image
+  UploadTask? uploadTask;
+  PlatformFile? pickedFile;
+
+  Future _getImageFromGallery() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    if (result != null) {
+      setState(() {
+        pickedFile = result.files.first;
+      });
+    } else {
+      return null;
+    }
   }
 
   void _addPosts(
       String pinId, PlatformFile? pickedFile, String postDetail) async {
     try {
-      const postsUrl = 'http://10.0.2.2:3000/api/posts';
+      final postsUrl = 'http://10.0.2.2:3000/api/posts';
 
       if (pickedFile != null) {
         FirebaseStorage storage = FirebaseStorage.instance;
@@ -509,28 +560,13 @@ class _MapScreenState extends State<MapScreen> {
     }
   }
 
-//Pick Image
-  UploadTask? uploadTask;
-  PlatformFile? pickedFile;
-
-  Future _getImageFromGallery() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
-    if (result != null) {
-      setState(() {
-        pickedFile = result.files.first;
-      });
-    } else {
-      return null;
-    }
-  }
-
 //Add Pin and Post at the same time
   // final pinId = 'a126f427-608f-4c6a-ac5a-f5198396f645';
   void _addMarkerWithPost(String locationName, double latitude,
       double longitude, PlatformFile? pickedFile, String postDetail) async {
     try {
-      const pinsUrl = 'http://10.0.2.2:3000/api/pins';
-      const postsUrl = 'http://10.0.2.2:3000/api/posts';
+      final pinsUrl = 'http://10.0.2.2:3000/api/pins';
+      final postsUrl = 'http://10.0.2.2:3000/api/posts';
 
       // Step 1: Add a new pin
       final pinResponse = await http.post(
@@ -669,12 +705,30 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
+// Fetch user image function
+  Future<String> fetchUserImage(String userId) async {
+    try {
+      final url = 'http://10.0.2.2:3000/api/profile/$userId';
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final userImage = data['user']['profile_image'];
+        return userImage;
+      } else {
+        throw Exception('Failed to fetch user image');
+      }
+    } catch (error) {
+      print('Error fetching user image: $error');
+      // Handle the error as needed
+      return ''; // Return an empty string or a default image URL in case of an error
+    }
+  }
+
   List<Post> posts = [];
-  void _slidePopup(String specifyId, String locationName) async {
+  void _slidePopup(String specifyId, String location_name) async {
     final desiredPinId = specifyId;
     print(desiredPinId);
     setState(() {
-      extractUserIdFromToken();
       _editingMode = false;
     });
 
@@ -708,7 +762,7 @@ class _MapScreenState extends State<MapScreen> {
                           Padding(
                             padding: const EdgeInsets.only(top: 5),
                             child: Text(
-                              locationName,
+                              location_name,
                               style: const TextStyle(
                                 color: Color.fromARGB(255, 33, 150, 243),
                                 fontSize: 24,
@@ -734,10 +788,12 @@ class _MapScreenState extends State<MapScreen> {
                         itemBuilder: (BuildContext context, int index) {
                           // Check if the current post has the same pin_id
                           if (posts[index].pinId == desiredPinId) {
+                            Future<String> userImageFuture =
+                                fetchUserImage(posts[index].userId);
                             return GestureDetector(
                               onTap: () {
                                 if (userWhoLoggedIn == posts[index].userId) {
-                                  _showPostPopup(posts[index], locationName);
+                                  _showPostPopup(posts[index], location_name);
                                 } else {
                                   print(userWhoLoggedIn);
                                   _showCannotEditMessage();
@@ -843,11 +899,40 @@ class _MapScreenState extends State<MapScreen> {
                                                 ),
                                               ],
                                             ),
-                                            child: const ClipOval(
-                                              child: CircleAvatar(
-                                                radius: 15,
-                                                backgroundImage: AssetImage(
-                                                    'images/randomppl.png'),
+                                            child: ClipOval(
+                                              child: FutureBuilder<String>(
+                                                future: userImageFuture,
+                                                builder: (context, snapshot) {
+                                                  if (snapshot
+                                                          .connectionState ==
+                                                      ConnectionState.waiting) {
+                                                    return const CircularProgressIndicator();
+                                                  } else if (snapshot
+                                                          .hasError ||
+                                                      snapshot.data == null) {
+                                                    return CircleAvatar(
+                                                      radius: 15,
+                                                      backgroundImage: AssetImage(
+                                                          'images/randomppl.png'),
+                                                    );
+                                                  } else {
+                                                    String userImage =
+                                                        snapshot.data!;
+                                                    return userImage == ''
+                                                        ? CircleAvatar(
+                                                            radius: 15,
+                                                            backgroundImage:
+                                                                AssetImage(
+                                                                    'images/randomppl.png'),
+                                                          )
+                                                        : CircleAvatar(
+                                                            radius: 15,
+                                                            backgroundImage:
+                                                                NetworkImage(
+                                                                    userImage),
+                                                          );
+                                                  }
+                                                },
                                               ),
                                             ),
                                           ),
@@ -898,12 +983,12 @@ class _MapScreenState extends State<MapScreen> {
             Positioned(
               top: 60,
               right: 23,
-              child: SizedBox(
+              child: Container(
                 width: 39,
                 height: 39,
                 child: FloatingActionButton(
                   onPressed: () {
-                    _createPostPopup(desiredPinId, locationName);
+                    _createPostPopup(desiredPinId, location_name);
                   },
                   backgroundColor: Colors.blue,
                   child: const Icon(
@@ -1348,23 +1433,6 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
-  Widget _buildImageWidget() {
-    if (pickedFile == null) {
-      return Image.asset(
-        'assets/images/upload pic.png',
-        width: 100.0,
-        height: 100.0,
-      );
-    } else {
-      final file = File(pickedFile!.path!);
-      return Image.file(
-        file,
-        width: 100.0,
-        height: 100.0,
-      );
-    }
-  }
-
   void _showNextPopup(Marker marker) {
     showDialog(
       barrierDismissible: false,
@@ -1412,6 +1480,12 @@ class _MapScreenState extends State<MapScreen> {
                       color: Colors.grey,
                     ),
                     const SizedBox(height: 15.0),
+                    Text(
+                      pickedFile == null ? "Picture is required" : "",
+                      style: TextStyle(
+                        fontSize: pickedFile == null ? 14.0 : 14.0,
+                      ),
+                    ),
                     Container(
                       decoration: BoxDecoration(
                         color: const Color.fromARGB(255, 224, 244, 255),
@@ -1422,26 +1496,24 @@ class _MapScreenState extends State<MapScreen> {
                         borderRadius: BorderRadius.circular(15.0),
                       ),
                       padding: const EdgeInsets.fromLTRB(70, 25, 70, 25),
-                      child: GestureDetector(
-                        onTap: _getImageFromGallery,
+                      child: ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                            const Color.fromARGB(255, 224, 244, 255),
+                          ),
+                          elevation: MaterialStateProperty.all<double>(
+                              0), // Set elevation to 0 to remove the button's shadow
+                          shadowColor: MaterialStateProperty.all<Color>(Colors
+                              .transparent), // Set shadowColor to transparent to remove the button's shadow
+                        ),
+                        onPressed: () async {
+                          await _getImageFromGallery();
+                          setState(() {});
+                        },
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            if (pickedFile != null)
-                              SizedBox(
-                                width: 100.0,
-                                height: 100.0,
-                                child: Image.file(
-                                  File(pickedFile!.path!),
-                                  fit: BoxFit.cover,
-                                ),
-                              )
-                            else
-                              Image.asset(
-                                'assets/images/upload pic.png',
-                                width: 100.0,
-                                height: 100.0,
-                              ),
+                            _buildImageWidget(),
                           ],
                         ),
                       ),
@@ -1558,30 +1630,25 @@ class _MapScreenState extends State<MapScreen> {
     getMarkerData();
   }
 
+  void _goToMyLocation() async {
+    if (_currentLocation != null &&
+        _currentLocation!.latitude != null &&
+        _currentLocation!.longitude != null) {
+      final CameraPosition newPosition = CameraPosition(
+        target: LatLng(
+          _currentLocation!.latitude!,
+          _currentLocation!.longitude!,
+        ),
+        zoom: 19.0,
+      );
+      _mapController
+          ?.animateCamera(CameraUpdate.newCameraPosition(newPosition));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              padding: const EdgeInsets.all(10),
-              color: Colors.blue,
-              icon: const FaIcon(FontAwesomeIcons.bars),
-              iconSize: 50,
-              onPressed: () {
-                Scaffold.of(context).openDrawer();
-              },
-              tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
-            );
-          },
-        ),
-        backgroundColor: const Color.fromARGB(0, 0, 0, 0),
-        elevation: 0,
-      ),
-      drawer: const Drawer(
-        child: DrawerBar(),
-      ),
       body: Stack(
         children: [
           GoogleMap(
@@ -1669,6 +1736,16 @@ class _MapScreenState extends State<MapScreen> {
             ),
           ),
           const SearchBarForMap(),
+          Align(
+            alignment: Alignment.bottomRight,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(0, 0, 25, 105),
+              child: FloatingActionButton(
+                onPressed: _goToMyLocation,
+                child: const Icon(Icons.my_location),
+              ),
+            ),
+          ),
         ],
       ),
     );
