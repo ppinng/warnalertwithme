@@ -148,29 +148,32 @@ class _UserProfileState extends State<UserProfile> {
                 SizedBox(
                   height: 100,
                 ),
-                Container(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 25),
-                        child: CircleAvatar(
-                          maxRadius: 55,
-                          backgroundImage:
-                              NetworkImage(userData?['profile_image'] ?? ''),
-                        ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 25),
+                      child: CircleAvatar(
+                        maxRadius: 55,
+                        backgroundImage:
+                            NetworkImage(userData?['profile_image'] ?? ''),
                       ),
-                      Padding(
+                    ),
+                    Expanded(
+                      child: Padding(
                         padding: const EdgeInsets.only(left: 8, top: 50),
-                        child: Row(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               userData?['username'] ?? '',
-                              style: TextStyle(
-                                  fontSize: 28,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color.fromARGB(255, 30, 108, 252)),
+                              style: const TextStyle(
+                                fontSize: 28,
+                                fontWeight: FontWeight.bold,
+                                color: Color.fromARGB(255, 30, 108, 252),
+                              ),
+                              overflow: TextOverflow.ellipsis,
                             ),
                             IconButton(
                               icon: const Icon(Icons.edit),
@@ -179,8 +182,8 @@ class _UserProfileState extends State<UserProfile> {
                           ],
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
                 Container(
                   padding: EdgeInsets.only(
@@ -199,113 +202,119 @@ class _UserProfileState extends State<UserProfile> {
                     replacement: const Center(
                         child: Text(
                             'No posts')), //Change to something else, This will show when users did not yet create pins or posts
-                    child: ListView.builder(
-                      itemCount: pins.length,
-                      itemBuilder: (context, index) {
-                        final pin = pins[index];
-                        return ListTile(
-                          subtitle: ListView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: pin['posts'].length,
-                            itemBuilder: (context, index) {
-                              final post = pin['posts'][index];
-                              return Padding(
-                                padding: const EdgeInsets.all(10),
-                                child: Container(
-                                  width: 100,
-                                  height: 125,
-                                  decoration: BoxDecoration(
-                                    color: const Color.fromARGB(
-                                        255, 224, 244, 255),
-                                    border: Border.all(
-                                      color: Color(0xFF76767676),
-                                      width: 1,
-                                    ),
-                                    borderRadius: BorderRadius.circular(15.0),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.grey.withOpacity(0.5),
-                                        spreadRadius: 2,
-                                        blurRadius: 5,
-                                        offset: const Offset(0,
-                                            3), // changes the position of the shadow
+                    child: MediaQuery.removePadding(
+                      context: context,
+                      removeTop: true,
+                      child: ListView.builder(
+                        itemCount: pins.length,
+                        itemBuilder: (context, index) {
+                          final pin = pins[index];
+                          return ListTile(
+                            subtitle: ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: pin['posts'].length,
+                              itemBuilder: (context, index) {
+                                final post = pin['posts'][index];
+                                return Padding(
+                                  padding: const EdgeInsets.all(10),
+                                  child: Container(
+                                    width: 100,
+                                    height: 125,
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFE0F4FF),
+                                      border: Border.all(
+                                        color: Color(0xFF76767676),
+                                        width: 1,
                                       ),
-                                    ],
-                                  ),
-                                  child: Stack(
-                                    children: [
-                                      Positioned(
-                                        top: 17,
-                                        left: 15,
-                                        child: SizedBox(
-                                          width: 120,
-                                          height: 91,
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(15.0),
-                                              boxShadow: [
-                                                BoxShadow(
-                                                  color: Colors.grey
-                                                      .withOpacity(0.5),
-                                                  spreadRadius: 2,
-                                                  blurRadius: 5,
-                                                  offset: const Offset(0, 3),
+                                      borderRadius: BorderRadius.circular(15.0),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.grey.withOpacity(0.5),
+                                          spreadRadius: 2,
+                                          blurRadius: 5,
+                                          offset: const Offset(0,
+                                              3), // changes the position of the shadow
+                                        ),
+                                      ],
+                                    ),
+                                    child: Stack(
+                                      children: [
+                                        Positioned(
+                                          top: 17,
+                                          left: 15,
+                                          child: SizedBox(
+                                            width: 120,
+                                            height: 91,
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(15.0),
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: Colors.grey
+                                                        .withOpacity(0.5),
+                                                    spreadRadius: 2,
+                                                    blurRadius: 5,
+                                                    offset: const Offset(0, 3),
+                                                  ),
+                                                ],
+                                              ),
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(15.0),
+                                                child: Image.network(
+                                                  post[
+                                                      'post_image'], // Use post image URL
+                                                  fit: BoxFit.cover,
                                                 ),
-                                              ],
-                                            ),
-                                            child: ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(15.0),
-                                              child: Image.network(
-                                                post[
-                                                    'post_image'], // Use post image URL
-                                                fit: BoxFit.cover,
                                               ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                      Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.fromLTRB(
-                                                145, 25, 0, 10),
-                                            child: Text(
-                                              pin['location_name'],
-                                              style: TextStyle(
-                                                fontSize: 18,
-                                                color: Colors.black,
+                                        Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.fromLTRB(
+                                                      145, 25, 0, 10),
+                                              child: Text(
+                                                pin['location_name'],
+                                                style: TextStyle(
+                                                  fontSize: 18,
+                                                  color: Colors.black,
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.fromLTRB(
-                                                145, 0, 0, 0),
-                                            child: Text(
-                                              post[
-                                                  'post_detail'], // Use post detail
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                color: const Color(0xFF767676),
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.fromLTRB(
+                                                      145, 0, 0, 0),
+                                              child: Text(
+                                                post[
+                                                    'post_detail'], // Use post detail
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  color:
+                                                      const Color(0xFF767676),
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              );
-                            },
-                          ),
-                        );
-                      },
+                                );
+                              },
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   ),
                 ),
