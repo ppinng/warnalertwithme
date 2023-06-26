@@ -88,7 +88,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   children: [
                     const SizedBox(height: 50.0),
                     _buildImageWithLoadingIndicator(
-                      'assets/images/logo_map.png',
+                      'assets/images/logo_map_bg.png',
                       width: 400.0,
                     ),
                     const SizedBox(height: 60.0),
@@ -170,7 +170,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   children: [
                     const SizedBox(height: 50.0),
                     _buildImageWithLoadingIndicator(
-                      'assets/images/logo_phone.png',
+                      'assets/images/logo_phone_bg.png',
                       width: 400.0,
                     ),
                     const SizedBox(height: 60.0),
@@ -253,7 +253,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   children: [
                     const SizedBox(height: 35.0),
                     _buildImageWithLoadingIndicator(
-                      'assets/images/logo_heart.png',
+                      'assets/images/logo_heart_bg.png',
                       width: 400.0,
                     ),
                     const SizedBox(height: 80.0),
