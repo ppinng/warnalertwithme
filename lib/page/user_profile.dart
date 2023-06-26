@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import 'package:warnalertwithme/component/menu_bar.dart';
 
 class UserProfile extends StatefulWidget {
   final dynamic userWhoLoggedIn;
@@ -107,8 +110,27 @@ class _UserProfileState extends State<UserProfile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: const Text('User Profile'),
+        leading: Builder(
+          builder: (BuildContext context) {
+            return IconButton(
+              padding: const EdgeInsets.all(10),
+              color: Colors.blue,
+              icon: const FaIcon(FontAwesomeIcons.bars),
+              iconSize: 50,
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+              tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+            );
+          },
+        ),
+        backgroundColor: const Color.fromARGB(0, 0, 0, 0),
+        elevation: 0,
+      ),
+      drawer: Drawer(
+        child: DrawerBar(),
       ),
       body: FutureBuilder<Map<String, dynamic>>(
         future: _userData,
@@ -123,19 +145,55 @@ class _UserProfileState extends State<UserProfile> {
             print(pins.length);
             return Column(
               children: [
-                ListTile(
-                  leading: CircleAvatar(
-                    backgroundImage:
-                        NetworkImage(userData?['profile_image'] ?? ''),
-                  ),
-                  title: Row(
-                    children: [
-                      Text(userData?['username'] ?? ''),
-                      IconButton(
-                        icon: const Icon(Icons.edit),
-                        onPressed: _showEditUsernameModal,
+                SizedBox(
+                  height: 100,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 25),
+                      child: CircleAvatar(
+                        maxRadius: 55,
+                        backgroundImage:
+                            NetworkImage(userData?['profile_image'] ?? ''),
                       ),
-                    ],
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 8, top: 50),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              userData?['username'] ?? '',
+                              style: const TextStyle(
+                                fontSize: 28,
+                                fontWeight: FontWeight.bold,
+                                color: Color.fromARGB(255, 30, 108, 252),
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.edit),
+                              onPressed: _showEditUsernameModal,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Container(
+                  padding: EdgeInsets.only(
+                    left: 25,
+                    top: 10,
+                  ),
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Post',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
                 Expanded(
@@ -144,26 +202,119 @@ class _UserProfileState extends State<UserProfile> {
                     replacement: const Center(
                         child: Text(
                             'No posts')), //Change to something else, This will show when users did not yet create pins or posts
-                    child: ListView.builder(
-                      itemCount: pins.length,
-                      itemBuilder: (context, index) {
-                        final pin = pins[index];
-                        return ListTile(
-                          title: Text(pin['location_name']),
-                          subtitle: ListView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: pin['posts'].length,
-                            itemBuilder: (context, index) {
-                              final post = pin['posts'][index];
-                              return ListTile(
-                                leading: Image.network(post['post_image']),
-                                title: Text(post['post_detail']),
-                              );
-                            },
-                          ),
-                        );
-                      },
+                    child: MediaQuery.removePadding(
+                      context: context,
+                      removeTop: true,
+                      child: ListView.builder(
+                        itemCount: pins.length,
+                        itemBuilder: (context, index) {
+                          final pin = pins[index];
+                          return ListTile(
+                            subtitle: ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: pin['posts'].length,
+                              itemBuilder: (context, index) {
+                                final post = pin['posts'][index];
+                                return Padding(
+                                  padding: const EdgeInsets.all(10),
+                                  child: Container(
+                                    width: 100,
+                                    height: 125,
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFE0F4FF),
+                                      border: Border.all(
+                                        color: Color(0xFF76767676),
+                                        width: 1,
+                                      ),
+                                      borderRadius: BorderRadius.circular(15.0),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.grey.withOpacity(0.5),
+                                          spreadRadius: 2,
+                                          blurRadius: 5,
+                                          offset: const Offset(0,
+                                              3), // changes the position of the shadow
+                                        ),
+                                      ],
+                                    ),
+                                    child: Stack(
+                                      children: [
+                                        Positioned(
+                                          top: 17,
+                                          left: 15,
+                                          child: SizedBox(
+                                            width: 120,
+                                            height: 91,
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(15.0),
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: Colors.grey
+                                                        .withOpacity(0.5),
+                                                    spreadRadius: 2,
+                                                    blurRadius: 5,
+                                                    offset: const Offset(0, 3),
+                                                  ),
+                                                ],
+                                              ),
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(15.0),
+                                                child: Image.network(
+                                                  post[
+                                                      'post_image'], // Use post image URL
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.fromLTRB(
+                                                      145, 25, 0, 10),
+                                              child: Text(
+                                                pin['location_name'],
+                                                style: TextStyle(
+                                                  fontSize: 18,
+                                                  color: Colors.black,
+                                                ),
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.fromLTRB(
+                                                      145, 0, 0, 0),
+                                              child: Text(
+                                                post[
+                                                    'post_detail'], // Use post detail
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  color:
+                                                      const Color(0xFF767676),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   ),
                 ),
