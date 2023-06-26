@@ -47,7 +47,6 @@ dependencies:
   file_picker: ^5.3.1
   firebase_storage: ^11.2.3
 
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -79,6 +78,10 @@ flutter:
     - assets/images/logo_phonee.svg
     - assets/images/logo_heartt.svg
     - assets/images/pin.png
+    - assets/images/logo_map_bg.png
+    - assets/images/logo_phone_bg.png
+    - assets/images/logo_heart_bg.png
+    - assets/images/loading_map.svg
     - images/Logo.png
     - images/randomppl.png
   #   - images/a_dot_ham.jpeg
