@@ -141,11 +141,13 @@ class _UserProfileState extends State<UserProfile> {
                 Expanded(
                   child: Visibility(
                     visible: pins.length != 0,
-                    replacement: const Center(child: Text('No posts')), //Change to something else, This will show when users did not yet create pins or posts
+                    replacement: const Center(
+                        child: Text(
+                            'No posts')), //Change to something else, This will show when users did not yet create pins or posts
                     child: ListView.builder(
                       itemCount: pins.length,
                       itemBuilder: (context, index) {
-                        final pin = pins[index - 1];
+                        final pin = pins[index];
                         return ListTile(
                           title: Text(pin['location_name']),
                           subtitle: ListView.builder(

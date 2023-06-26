@@ -3,14 +3,14 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-class SearchBar extends StatefulWidget {
-  const SearchBar({Key? key}) : super(key: key);
+class SearchBarForMap extends StatefulWidget {
+  const SearchBarForMap({Key? key}) : super(key: key);
 
   @override
-  State<SearchBar> createState() => _SearchBarState();
+  State<SearchBarForMap> createState() => _SearchBarForMapState();
 }
 
-class _SearchBarState extends State<SearchBar> {
+class _SearchBarForMapState extends State<SearchBarForMap> {
   final TextEditingController _searchController = TextEditingController();
   List<Map<String, dynamic>> _searchResults = [];
 

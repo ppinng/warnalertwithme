@@ -2,7 +2,6 @@
 
 import 'dart:async';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -15,6 +14,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:warnalertwithme/component/search.dart';
+
+import '../../component/menu_bar.dart';
 
 // Define a Post model class to represent the structure of a post
 class Post {
@@ -58,12 +59,12 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> {
   GoogleMapController? _mapController;
-  Location _location = Location();
+  final Location _location = Location();
   LocationData? _currentLocation;
   bool _editingMode = false;
   Set<Marker> _markers = {};
-  Set<Marker> _selectedMarkers = Set<Marker>();
-  Set<Marker> _addMarkers = {};
+  final Set<Marker> _selectedMarkers = <Marker>{};
+  final Set<Marker> _addMarkers = {};
   late SharedPreferences prefs;
   var myToken;
   var userWhoLoggedIn;
@@ -92,7 +93,7 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   void getMarkerData() async {
-    final url = 'http://10.0.2.2:3000/api/pins';
+    const url = 'http://10.0.2.2:3000/api/pins';
 
     final response = await http.get(Uri.parse(url));
 
@@ -128,111 +129,108 @@ class _MapScreenState extends State<MapScreen> {
                 Marker? marker = _markers
                     .firstWhere((marker) => marker.markerId == markerId);
 
-                if (marker != null) {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15.0),
-                        ),
-                        backgroundColor:
-                            const Color.fromARGB(255, 224, 244, 255),
-                        content: Container(
-                          width: 383.0, // Set the desired width
-                          height: 90.0, // Set the desired height
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Padding(
-                                padding: EdgeInsets.only(
-                                    bottom: 10.0), // Add padding to the bottom
-                                child: Text(
-                                  'Confirm to remove the marker ?',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 18.0, // Set the desired font size
-                                  ),
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                      backgroundColor: const Color.fromARGB(255, 224, 244, 255),
+                      content: SizedBox(
+                        width: 383.0, // Set the desired width
+                        height: 90.0, // Set the desired height
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.only(
+                                  bottom: 10.0), // Add padding to the bottom
+                              child: Text(
+                                'Confirm to remove the marker ?',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 18.0, // Set the desired font size
                                 ),
                               ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      _deleteMarker(specifyId);
-                                      getMarkerData();
-                                      Navigator.pop(context);
-                                    },
-                                    style: ButtonStyle(
-                                      padding: MaterialStateProperty.all<
-                                          EdgeInsetsGeometry>(
-                                        const EdgeInsets.symmetric(
-                                            vertical: 12.0,
-                                            horizontal:
-                                                45.0), // Adjust the padding
-                                      ),
-                                      backgroundColor:
-                                          MaterialStateProperty.all<Color>(
-                                              const Color.fromARGB(
-                                                  255, 33, 150, 243)),
-                                      shape: MaterialStateProperty.all<
-                                          RoundedRectangleBorder>(
-                                        RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(50.0),
-                                        ),
-                                      ),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                ElevatedButton(
+                                  onPressed: () {
+                                    _deleteMarker(specifyId);
+                                    getMarkerData();
+                                    Navigator.pop(context);
+                                  },
+                                  style: ButtonStyle(
+                                    padding: MaterialStateProperty.all<
+                                        EdgeInsetsGeometry>(
+                                      const EdgeInsets.symmetric(
+                                          vertical: 12.0,
+                                          horizontal:
+                                              45.0), // Adjust the padding
                                     ),
-                                    child: const Text(
-                                      'Yes',
-                                      style: TextStyle(
-                                          fontSize:
-                                              13.0), // Set the desired font size
+                                    backgroundColor:
+                                        MaterialStateProperty.all<Color>(
+                                            const Color.fromARGB(
+                                                255, 33, 150, 243)),
+                                    shape: MaterialStateProperty.all<
+                                        RoundedRectangleBorder>(
+                                      RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(50.0),
+                                      ),
                                     ),
                                   ),
-                                  const SizedBox(width: 30.0),
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      Navigator.of(context)
-                                          .pop(); // Close the dialog
-                                    },
-                                    style: ButtonStyle(
-                                      padding: MaterialStateProperty.all<
-                                          EdgeInsetsGeometry>(
-                                        const EdgeInsets.symmetric(
-                                            vertical: 12.0,
-                                            horizontal:
-                                                50.0), // Adjust the padding
-                                      ),
-                                      backgroundColor:
-                                          MaterialStateProperty.all<Color>(
-                                              Colors.red),
-                                      shape: MaterialStateProperty.all<
-                                          RoundedRectangleBorder>(
-                                        RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(45.0),
-                                        ),
-                                      ),
+                                  child: const Text(
+                                    'Yes',
+                                    style: TextStyle(
+                                        fontSize:
+                                            13.0), // Set the desired font size
+                                  ),
+                                ),
+                                const SizedBox(width: 30.0),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.of(context)
+                                        .pop(); // Close the dialog
+                                  },
+                                  style: ButtonStyle(
+                                    padding: MaterialStateProperty.all<
+                                        EdgeInsetsGeometry>(
+                                      const EdgeInsets.symmetric(
+                                          vertical: 12.0,
+                                          horizontal:
+                                              50.0), // Adjust the padding
                                     ),
-                                    child: const Text(
-                                      'No',
-                                      style: TextStyle(
-                                          fontSize:
-                                              13.0), // Set the desired font size
+                                    backgroundColor:
+                                        MaterialStateProperty.all<Color>(
+                                            Colors.red),
+                                    shape: MaterialStateProperty.all<
+                                        RoundedRectangleBorder>(
+                                      RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(45.0),
+                                      ),
                                     ),
                                   ),
-                                ],
-                              ),
-                            ],
-                          ),
+                                  child: const Text(
+                                    'No',
+                                    style: TextStyle(
+                                        fontSize:
+                                            13.0), // Set the desired font size
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                      );
-                    },
-                  );
-                }
+                      ),
+                    );
+                  },
+                );
               } else {
                 // Find the corresponding marker
                 Marker? marker = _markers
@@ -253,7 +251,7 @@ class _MapScreenState extends State<MapScreen> {
         _markers = newMarkers;
       });
 
-      print('Retrieved pins data: $pins');
+      //print('Retrieved pins data: $pins');
     } else {
       throw Exception('Failed to retrieve pins data');
     }
@@ -424,7 +422,7 @@ class _MapScreenState extends State<MapScreen> {
   void _addPosts(
       String pinId, PlatformFile? pickedFile, String postDetail) async {
     try {
-      final postsUrl = 'http://10.0.2.2:3000/api/posts';
+      const postsUrl = 'http://10.0.2.2:3000/api/posts';
 
       if (pickedFile != null) {
         FirebaseStorage storage = FirebaseStorage.instance;
@@ -531,8 +529,8 @@ class _MapScreenState extends State<MapScreen> {
   void _addMarkerWithPost(String locationName, double latitude,
       double longitude, PlatformFile? pickedFile, String postDetail) async {
     try {
-      final pinsUrl = 'http://10.0.2.2:3000/api/pins';
-      final postsUrl = 'http://10.0.2.2:3000/api/posts';
+      const pinsUrl = 'http://10.0.2.2:3000/api/pins';
+      const postsUrl = 'http://10.0.2.2:3000/api/posts';
 
       // Step 1: Add a new pin
       final pinResponse = await http.post(
@@ -672,7 +670,7 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   List<Post> posts = [];
-  void _slidePopup(String specifyId, String location_name) async {
+  void _slidePopup(String specifyId, String locationName) async {
     final desiredPinId = specifyId;
     print(desiredPinId);
     setState(() {
@@ -710,7 +708,7 @@ class _MapScreenState extends State<MapScreen> {
                           Padding(
                             padding: const EdgeInsets.only(top: 5),
                             child: Text(
-                              location_name,
+                              locationName,
                               style: const TextStyle(
                                 color: Color.fromARGB(255, 33, 150, 243),
                                 fontSize: 24,
@@ -739,7 +737,7 @@ class _MapScreenState extends State<MapScreen> {
                             return GestureDetector(
                               onTap: () {
                                 if (userWhoLoggedIn == posts[index].userId) {
-                                  _showPostPopup(posts[index], location_name);
+                                  _showPostPopup(posts[index], locationName);
                                 } else {
                                   print(userWhoLoggedIn);
                                   _showCannotEditMessage();
@@ -900,12 +898,12 @@ class _MapScreenState extends State<MapScreen> {
             Positioned(
               top: 60,
               right: 23,
-              child: Container(
+              child: SizedBox(
                 width: 39,
                 height: 39,
                 child: FloatingActionButton(
                   onPressed: () {
-                    _createPostPopup(desiredPinId, location_name);
+                    _createPostPopup(desiredPinId, locationName);
                   },
                   backgroundColor: Colors.blue,
                   child: const Icon(
@@ -1563,6 +1561,27 @@ class _MapScreenState extends State<MapScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        leading: Builder(
+          builder: (BuildContext context) {
+            return IconButton(
+              padding: const EdgeInsets.all(10),
+              color: Colors.blue,
+              icon: const FaIcon(FontAwesomeIcons.bars),
+              iconSize: 50,
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+              tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+            );
+          },
+        ),
+        backgroundColor: const Color.fromARGB(0, 0, 0, 0),
+        elevation: 0,
+      ),
+      drawer: const Drawer(
+        child: DrawerBar(),
+      ),
       body: Stack(
         children: [
           GoogleMap(
@@ -1649,7 +1668,7 @@ class _MapScreenState extends State<MapScreen> {
                     ),
             ),
           ),
-          const SearchBar(),
+          const SearchBarForMap(),
         ],
       ),
     );
