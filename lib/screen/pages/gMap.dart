@@ -83,7 +83,7 @@ class _MapScreenState extends State<MapScreen> {
     Timer.periodic(const Duration(seconds: 30), (_) {
       getMarkerData();
     });
-    Future.delayed(const Duration(seconds: 1), () {
+    Future.delayed(const Duration(milliseconds: 500), () {
       extractUserIdFromToken();
     });
   }
@@ -288,7 +288,7 @@ class _MapScreenState extends State<MapScreen> {
                       icon: const Icon(
                         Icons.close,
                         size: 50.0,
-                        color: Colors.blue,
+                        color: Color(0xff4D8CFE),
                       ),
                       onPressed: () {
                         _cancelCreatePosts();
@@ -1003,7 +1003,7 @@ class _MapScreenState extends State<MapScreen> {
                   onPressed: () {
                     _createPostPopup(desiredPinId, locationName);
                   },
-                  backgroundColor: Colors.blue,
+                  backgroundColor: const Color(0xff4D8CFE),
                   child: const Icon(
                     Icons.add,
                     color: Colors.white,
@@ -1046,7 +1046,7 @@ class _MapScreenState extends State<MapScreen> {
                       icon: const Icon(
                         Icons.close,
                         size: 50.0,
-                        color: Colors.blue,
+                        color: Color(0xff4D8CFE),
                       ),
                       onPressed: () {
                         _cancelCreatePosts();
@@ -1353,7 +1353,7 @@ class _MapScreenState extends State<MapScreen> {
                     icon: const Icon(
                       Icons.close,
                       size: 50.0,
-                      color: Colors.blue,
+                      color: Color(0xff4D8CFE),
                     ),
                     onPressed: _cancelCreatePin,
                   ),
@@ -1476,7 +1476,7 @@ class _MapScreenState extends State<MapScreen> {
                       icon: const Icon(
                         Icons.close,
                         size: 50.0,
-                        color: Colors.blue,
+                        color: Color(0xff4D8CFE),
                       ),
                       onPressed: _cancelCreatePin,
                     ),
@@ -1670,126 +1670,153 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              padding: const EdgeInsets.all(10),
-              color: Colors.blue,
-              icon: const FaIcon(FontAwesomeIcons.bars),
-              iconSize: 50,
-              onPressed: () {
-                Scaffold.of(context).openDrawer();
-              },
-              tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
-            );
-          },
-        ),
-        backgroundColor: const Color.fromARGB(0, 0, 0, 0),
-        elevation: 0,
-      ),
-      drawer: const Drawer(child: DrawerBar()),
-      body: Stack(
-        children: [
-          GoogleMap(
-            onMapCreated: (GoogleMapController controller) {
-              _mapController = controller;
-            },
-            initialCameraPosition: CameraPosition(
-              target: LatLng(
-                _currentLocation!.latitude!,
-                _currentLocation!.longitude!,
+    if (_currentLocation == null) {
+      return Container(
+        color: Colors.white, // Set the background color of the app to white
+        child: Scaffold(
+          body: Center(
+            child: Container(
+              width: 150,
+              height: 150,
+              color: Colors.white,
+              child: const CircularProgressIndicator(
+                strokeWidth: 10,
+                backgroundColor: Colors.grey,
+                valueColor: AlwaysStoppedAnimation(
+                  Color(0xff4D8CFE),
+                ),
               ),
-              zoom: 19.0,
             ),
-            myLocationEnabled: true,
-            myLocationButtonEnabled: false,
-            zoomControlsEnabled: false,
-            onTap: _onMapTap,
-            markers: _markers,
           ),
-          Align(
-            alignment: Alignment.bottomRight,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(0, 0, 10, 10),
-              child: _editingMode
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 0, 10, 30),
-                          child: SizedBox(
-                            height: 44.0,
-                            width: 44.0,
-                            child: RawMaterialButton(
-                              onPressed: _cancelEditingMode,
-                              elevation: 2.0,
-                              fillColor: Colors.white,
-                              shape: const CircleBorder(),
-                              child: const Icon(
-                                Icons.close,
-                                size: 45,
-                                color: Colors.blue,
+        ),
+      );
+    } else {
+      return Scaffold(
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          leading: Builder(
+            builder: (BuildContext context) {
+              return IconButton(
+                padding: const EdgeInsets.all(10),
+                color: const Color(0xff4D8CFE),
+                icon: const FaIcon(FontAwesomeIcons.bars),
+                iconSize: 50,
+                onPressed: () {
+                  Scaffold.of(context).openDrawer();
+                },
+                tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+              );
+            },
+          ),
+          backgroundColor: const Color.fromARGB(0, 0, 0, 0),
+          elevation: 0,
+        ),
+        drawer: const Drawer(child: DrawerBar()),
+        body: Stack(
+          children: [
+            GoogleMap(
+              onMapCreated: (GoogleMapController controller) {
+                _mapController = controller;
+              },
+              initialCameraPosition: CameraPosition(
+                target: LatLng(
+                  _currentLocation!.latitude!,
+                  _currentLocation!.longitude!,
+                ),
+                zoom: 19.0,
+              ),
+              myLocationEnabled: true,
+              myLocationButtonEnabled: false,
+              zoomControlsEnabled: false,
+              onTap: _onMapTap,
+              markers: _markers,
+            ),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(0, 0, 10, 10),
+                child: _editingMode
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 0, 10, 30),
+                            child: SizedBox(
+                              height: 44.0,
+                              width: 44.0,
+                              child: RawMaterialButton(
+                                onPressed: _cancelEditingMode,
+                                elevation: 2.0,
+                                fillColor: Colors.white,
+                                shape: const CircleBorder(),
+                                child: const Icon(
+                                  Icons.close,
+                                  size: 45,
+                                  color: Color(0xff4D8CFE),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 0, 13, 25),
-                          child: SizedBox(
-                            width: 118,
-                            height: 60,
-                            child: ElevatedButton(
-                              style: ButtonStyle(
-                                shape: MaterialStateProperty.all(
-                                  RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.circular(99999.0),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 0, 13, 25),
+                            child: SizedBox(
+                              width: 118,
+                              height: 60,
+                              child: ElevatedButton(
+                                style: ButtonStyle(
+                                  backgroundColor:
+                                      MaterialStateProperty.all<Color>(
+                                          Color(0xff4D8CFE)),
+                                  shape: MaterialStateProperty.all(
+                                    RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(99999.0),
+                                    ),
+                                  ),
+                                ),
+                                onPressed: () {},
+                                child: const Text(
+                                  'Editing',
+                                  style: TextStyle(
+                                    fontSize: 24,
+                                    fontFamily: 'IBM Plex Sans',
+                                    color: Color.fromARGB(255, 255, 255, 255),
                                   ),
                                 ),
                               ),
-                              onPressed: () {},
-                              child: const Text(
-                                'Editing',
-                                style: TextStyle(
-                                  fontSize: 24,
-                                  fontFamily: 'IBM Plex Sans',
-                                  color: Color.fromARGB(255, 255, 255, 255),
-                                ),
-                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    )
-                  : Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 0, 13, 25),
-                      child: SizedBox(
-                        width: 57.0,
-                        height: 58.0,
-                        child: FloatingActionButton(
-                          onPressed: _toggleEditingMode,
-                          child: const Icon(Icons.edit),
+                        ],
+                      )
+                    : Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 0, 13, 25),
+                        child: SizedBox(
+                          width: 57.0,
+                          height: 58.0,
+                          child: FloatingActionButton(
+                            backgroundColor: const Color(0xff4D8CFE),
+                            onPressed: _toggleEditingMode,
+                            child: const Icon(Icons.edit),
+                          ),
                         ),
                       ),
-                    ),
-            ),
-          ),
-          const SearchBarForMap(),
-          Align(
-            alignment: Alignment.bottomRight,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(0, 0, 25, 105),
-              child: FloatingActionButton(
-                onPressed: _goToMyLocation,
-                child: const Icon(Icons.my_location),
               ),
             ),
-          ),
-        ],
-      ),
-    );
+            const SearchBarForMap(),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(0, 0, 25, 105),
+                child: FloatingActionButton(
+                  backgroundColor: Color(0xff4D8CFE),
+                  onPressed: _goToMyLocation,
+                  child: const Icon(Icons.my_location),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
   }
 }
