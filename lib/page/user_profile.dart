@@ -203,95 +203,7 @@ class _UserProfileState extends State<UserProfile> {
                       itemCount: pins.length,
                       itemBuilder: (context, index) {
                         final pin = pins[index];
-                        // final post = pin['posts'][index];
-                        return
-
-                            // Padding(
-                            //   padding: const EdgeInsets.all(10),
-                            //   child: Container(
-                            //     width: 100,
-                            //     height: 125,
-                            //     decoration: BoxDecoration(
-                            //       color: const Color.fromARGB(255, 224, 244, 255),
-                            //       border: Border.all(
-                            //         color: Color(0xFF76767676),
-                            //         width: 1,
-                            //       ),
-                            //       borderRadius: BorderRadius.circular(15.0),
-                            //       boxShadow: [
-                            //         BoxShadow(
-                            //           color: Colors.grey.withOpacity(0.5),
-                            //           spreadRadius: 2,
-                            //           blurRadius: 5,
-                            //           offset: const Offset(0,
-                            //               3), // changes the position of the shadow
-                            //         ),
-                            //       ],
-                            //     ),
-
-                            //     child: Stack(
-                            //       children: [
-                            //         Positioned(
-                            //           top: 17,
-                            //           left: 15,
-                            //           child: SizedBox(
-                            //             width: 120,
-                            //             height: 91,
-                            //             child: Container(
-                            //               decoration: BoxDecoration(
-                            //                 borderRadius:
-                            //                     BorderRadius.circular(15.0),
-                            //                 boxShadow: [
-                            //                   BoxShadow(
-                            //                     color: Colors.grey.withOpacity(0.5),
-                            //                     spreadRadius: 2,
-                            //                     blurRadius: 5,
-                            //                     offset: const Offset(0, 3),
-                            //                   ),
-                            //                 ],
-                            //               ),
-                            //               child: ClipRRect(
-                            //                 borderRadius:
-                            //                     BorderRadius.circular(15.0),
-                            //                 child: Image.network(
-                            //                   post[
-                            //                       'post_image'], // Use post image URL
-                            //                   fit: BoxFit.cover,
-                            //                 ),
-                            //               ),
-                            //             ),
-                            //           ),
-                            //         ),
-                            //         Align(
-                            //           alignment: Alignment.center,
-                            //           child: Padding(
-                            //             padding: const EdgeInsets.fromLTRB(
-                            //                 145, 0, 0, 20),
-                            //             child: Text(
-                            //               post['post_detail'], // Use post detail
-                            //               style: TextStyle(
-                            //                 fontSize: 14,
-                            //                 color: const Color.fromARGB(
-                            //                     147, 118, 118, 229),
-                            //                 shadows: [
-                            //                   Shadow(
-                            //                     color:
-                            //                         Colors.black.withOpacity(0.2),
-                            //                     blurRadius: 5,
-                            //                     offset: const Offset(0, 3),
-                            //                   ),
-                            //                 ],
-                            //               ),
-                            //             ),
-                            //           ),
-                            //         ),
-                            //       ],
-                            //     ),
-                            //   ),
-                            // );
-
-                            ListTile(
-                          // title: Text(pin['location_name']),
+                        return ListTile(
                           subtitle: ListView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
@@ -386,62 +298,10 @@ class _UserProfileState extends State<UserProfile> {
                                           ),
                                         ],
                                       ),
-                                      // Align(
-                                      //   alignment: Alignment.center,
-                                      //   child: Padding(
-                                      //     padding: const EdgeInsets.fromLTRB(
-                                      //         145, 0, 0, 20),
-                                      //     child: Text(
-                                      //       pin['location_name'],
-                                      //       style: TextStyle(
-                                      //         fontSize: 14,
-                                      //         color: const Color.fromARGB(
-                                      //             147, 118, 118, 229),
-                                      //         shadows: [
-                                      //           Shadow(
-                                      //             color: Colors.black
-                                      //                 .withOpacity(0.2),
-                                      //             blurRadius: 5,
-                                      //             offset: const Offset(0, 3),
-                                      //           ),
-                                      //         ],
-                                      //       ),
-                                      //     ),
-                                      //   ),
-                                      // ),
-                                      // Align(
-                                      //   alignment: Alignment.center,
-                                      //   child: Padding(
-                                      //     padding: const EdgeInsets.fromLTRB(
-                                      //         145, 0, 0, 20),
-                                      //     child: Text(
-                                      //       post[
-                                      //           'post_detail'], // Use post detail
-                                      //       style: TextStyle(
-                                      //         fontSize: 14,
-                                      //         color: const Color.fromARGB(
-                                      //             147, 118, 118, 229),
-                                      //         shadows: [
-                                      //           Shadow(
-                                      //             color: Colors.black
-                                      //                 .withOpacity(0.2),
-                                      //             blurRadius: 5,
-                                      //             offset: const Offset(0, 3),
-                                      //           ),
-                                      //         ],
-                                      //       ),
-                                      //     ),
-                                      //   ),
-                                      // ),
                                     ],
                                   ),
                                 ),
                               );
-
-                              // ListTile(
-                              //   leading: Image.network(post['post_image']),
-                              //   title: Text(post['post_detail']),
-                              // );
                             },
                           ),
                         );
