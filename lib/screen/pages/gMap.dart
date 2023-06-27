@@ -130,109 +130,113 @@ class _MapScreenState extends State<MapScreen> {
                 // Find the corresponding marker
                 Marker? marker = _markers
                     .firstWhere((marker) => marker.markerId == markerId);
-
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15.0),
-                      ),
-                      backgroundColor: const Color.fromARGB(255, 224, 244, 255),
-                      content: SizedBox(
-                        width: 383.0, // Set the desired width
-                        height: 90.0, // Set the desired height
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Padding(
-                              padding: EdgeInsets.only(
-                                  bottom: 10.0), // Add padding to the bottom
-                              child: Text(
-                                'Confirm to remove the marker ?',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 18.0, // Set the desired font size
-                                ),
+                pin['user_id'] != userWhoLoggedIn
+                    ? _showCannotDeletePins()
+                    : showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15.0),
+                            ),
+                            backgroundColor:
+                                const Color.fromARGB(255, 224, 244, 255),
+                            content: SizedBox(
+                              width: 383.0, // Set the desired width
+                              height: 90.0, // Set the desired height
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Padding(
+                                    padding: EdgeInsets.only(
+                                        bottom:
+                                            10.0), // Add padding to the bottom
+                                    child: Text(
+                                      'Confirm to remove the marker ?',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize:
+                                            18.0, // Set the desired font size
+                                      ),
+                                    ),
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          _deleteMarker(specifyId);
+                                          getMarkerData();
+                                          Navigator.pop(context);
+                                        },
+                                        style: ButtonStyle(
+                                          padding: MaterialStateProperty.all<
+                                              EdgeInsetsGeometry>(
+                                            const EdgeInsets.symmetric(
+                                                vertical: 12.0,
+                                                horizontal:
+                                                    45.0), // Adjust the padding
+                                          ),
+                                          backgroundColor:
+                                              MaterialStateProperty.all<Color>(
+                                                  const Color.fromARGB(
+                                                      255, 33, 150, 243)),
+                                          shape: MaterialStateProperty.all<
+                                              RoundedRectangleBorder>(
+                                            RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(50.0),
+                                            ),
+                                          ),
+                                        ),
+                                        child: const Text(
+                                          'Yes',
+                                          style: TextStyle(
+                                              fontSize:
+                                                  13.0), // Set the desired font size
+                                        ),
+                                      ),
+                                      const SizedBox(width: 30.0),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.of(context)
+                                              .pop(); // Close the dialog
+                                        },
+                                        style: ButtonStyle(
+                                          padding: MaterialStateProperty.all<
+                                              EdgeInsetsGeometry>(
+                                            const EdgeInsets.symmetric(
+                                                vertical: 12.0,
+                                                horizontal:
+                                                    50.0), // Adjust the padding
+                                          ),
+                                          backgroundColor:
+                                              MaterialStateProperty.all<Color>(
+                                                  Colors.red),
+                                          shape: MaterialStateProperty.all<
+                                              RoundedRectangleBorder>(
+                                            RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(45.0),
+                                            ),
+                                          ),
+                                        ),
+                                        child: const Text(
+                                          'No',
+                                          style: TextStyle(
+                                              fontSize:
+                                                  13.0), // Set the desired font size
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                ElevatedButton(
-                                  onPressed: () {
-                                    _deleteMarker(specifyId);
-                                    getMarkerData();
-                                    Navigator.pop(context);
-                                  },
-                                  style: ButtonStyle(
-                                    padding: MaterialStateProperty.all<
-                                        EdgeInsetsGeometry>(
-                                      const EdgeInsets.symmetric(
-                                          vertical: 12.0,
-                                          horizontal:
-                                              45.0), // Adjust the padding
-                                    ),
-                                    backgroundColor:
-                                        MaterialStateProperty.all<Color>(
-                                            const Color.fromARGB(
-                                                255, 33, 150, 243)),
-                                    shape: MaterialStateProperty.all<
-                                        RoundedRectangleBorder>(
-                                      RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(50.0),
-                                      ),
-                                    ),
-                                  ),
-                                  child: const Text(
-                                    'Yes',
-                                    style: TextStyle(
-                                        fontSize:
-                                            13.0), // Set the desired font size
-                                  ),
-                                ),
-                                const SizedBox(width: 30.0),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.of(context)
-                                        .pop(); // Close the dialog
-                                  },
-                                  style: ButtonStyle(
-                                    padding: MaterialStateProperty.all<
-                                        EdgeInsetsGeometry>(
-                                      const EdgeInsets.symmetric(
-                                          vertical: 12.0,
-                                          horizontal:
-                                              50.0), // Adjust the padding
-                                    ),
-                                    backgroundColor:
-                                        MaterialStateProperty.all<Color>(
-                                            Colors.red),
-                                    shape: MaterialStateProperty.all<
-                                        RoundedRectangleBorder>(
-                                      RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(45.0),
-                                      ),
-                                    ),
-                                  ),
-                                  child: const Text(
-                                    'No',
-                                    style: TextStyle(
-                                        fontSize:
-                                            13.0), // Set the desired font size
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                );
+                          );
+                        },
+                      );
               } else {
                 // Find the corresponding marker
                 Marker? marker = _markers
@@ -257,6 +261,47 @@ class _MapScreenState extends State<MapScreen> {
     } else {
       throw Exception('Failed to retrieve pins data');
     }
+  }
+
+  void _showCannotDeletePins() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: const Color(0xFFE0F4FF),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30),
+          ),
+          title: const Text("Cannot Delete Pin"),
+          content: const Text("You do not have permission to delete this pin."),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              style: ButtonStyle(
+                padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                  const EdgeInsets.symmetric(
+                      vertical: 12.0, horizontal: 30.0), // Adjust the padding
+                ),
+                backgroundColor: MaterialStateProperty.all<Color>(
+                  const Color(0xff4D8CFE),
+                ),
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(45.0),
+                  ),
+                ),
+              ),
+              child: const Text(
+                'OK',
+                style: TextStyle(fontSize: 13.0), // Set the desired font size
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -706,17 +751,35 @@ class _MapScreenState extends State<MapScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: const Color(0xFFE0F4FF),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30),
           ),
           title: const Text("Cannot Edit Post"),
           content: const Text("You do not have permission to edit this post."),
           actions: <Widget>[
-            TextButton(
-              child: const Text("OK"),
+            ElevatedButton(
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.of(context).pop(); // Close the dialog
               },
+              style: ButtonStyle(
+                padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                  const EdgeInsets.symmetric(
+                      vertical: 12.0, horizontal: 30.0), // Adjust the padding
+                ),
+                backgroundColor: MaterialStateProperty.all<Color>(
+                  const Color(0xff4D8CFE),
+                ),
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(45.0),
+                  ),
+                ),
+              ),
+              child: const Text(
+                'OK',
+                style: TextStyle(fontSize: 13.0), // Set the desired font size
+              ),
             ),
           ],
         );
@@ -1079,7 +1142,7 @@ class _MapScreenState extends State<MapScreen> {
                           thickness: 1.0,
                           color: Colors.grey,
                         ),
-                         const SizedBox(height: 15.0),
+                        const SizedBox(height: 15.0),
                         Text(
                           pickedFile == null ? "Picture is required" : "",
                           style: TextStyle(
@@ -1147,7 +1210,6 @@ class _MapScreenState extends State<MapScreen> {
                             )
                           ],
                         ),
-                        
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -1156,22 +1218,23 @@ class _MapScreenState extends State<MapScreen> {
                                 if ((_formKey.currentState?.validate() ??
                                         false) &&
                                     pickedFile != null) {
-                                String updatedDescription =
-                                    descriptionController.text;
-                                // Perform the update operation
-                                if (pickedFile != null) {
-                                  updatePostWithNewImage(post.postId,
-                                      updatedDescription, pickedFile);
-                                } else {
-                                  updatePostWithOutImage(
-                                      post.postId, updatedDescription);
+                                  String updatedDescription =
+                                      descriptionController.text;
+                                  // Perform the update operation
+                                  if (pickedFile != null) {
+                                    updatePostWithNewImage(post.postId,
+                                        updatedDescription, pickedFile);
+                                  } else {
+                                    updatePostWithOutImage(
+                                        post.postId, updatedDescription);
+                                  }
+                                  Navigator.pop(context);
+                                  Navigator.pop(context);
+                                  Future.delayed(const Duration(seconds: 1),
+                                      () {
+                                    _slidePopup(post.pinId, locationName);
+                                  });
                                 }
-                                Navigator.pop(context);
-                                Navigator.pop(context);
-                                Future.delayed(const Duration(seconds: 1), () {
-                                  _slidePopup(post.pinId, locationName);
-                                });
-                                    }
                               },
                               style: ButtonStyle(
                                 padding: MaterialStateProperty.all<
@@ -1412,7 +1475,8 @@ class _MapScreenState extends State<MapScreen> {
                                 decoration: InputDecoration(
                                   helperText: '    ',
                                   filled: true,
-                                  fillColor: Color.fromARGB(240, 240, 240, 240),
+                                  fillColor:
+                                      const Color.fromARGB(240, 240, 240, 240),
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(15)),
                                   hintText: 'Name this location..',
@@ -1584,38 +1648,38 @@ class _MapScreenState extends State<MapScreen> {
                           ),
                         ),
                         const SizedBox(height: 1.0),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 10.0),
-
-                          TextFormField(
-                            controller: postDetailController,
-                            decoration: InputDecoration(
-                              labelText: 'Description (require)',
-                              helperText: '    ',
-                              filled: true,
-                              fillColor: Color.fromARGB(255, 224, 244, 255),
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15)),
-                              hintText: 'Tell us about this location..',
-                              hintStyle: TextStyle(fontSize: 12.0),
-                            ),
-                            maxLines: null,
-                            validator: (value) {
-                              if (value!.isEmpty) {
-                                return 'Description is required.';
-                              }
-                              return null;
-                            },
-                          )
-                        ],
-                      ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 10.0),
+                            TextFormField(
+                              controller: postDetailController,
+                              decoration: InputDecoration(
+                                labelText: 'Description (require)',
+                                helperText: '    ',
+                                filled: true,
+                                fillColor:
+                                    const Color.fromARGB(255, 224, 244, 255),
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(15)),
+                                hintText: 'Tell us about this location..',
+                                hintStyle: const TextStyle(fontSize: 12.0),
+                              ),
+                              maxLines: null,
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return 'Description is required.';
+                                }
+                                return null;
+                              },
+                            )
+                          ],
+                        ),
                         const SizedBox(height: 5.0),
                         Container(
                           alignment: Alignment.bottomCenter,
                           child: Padding(
-                           padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                             child: SizedBox(
                               width: 100, // Set the desired width
                               height: 40, // Set the desired height
@@ -1624,15 +1688,18 @@ class _MapScreenState extends State<MapScreen> {
                                   if ((_formKey.currentState?.validate() ??
                                           false) &&
                                       pickedFile != null) {
-                                  String locationName = locationController.text;
-                                  double latitude = marker.position.latitude;
-                                  double longitude = marker.position.longitude;
-                                  String postDetail = postDetailController.text;
-                                  _addMarkerWithPost(locationName, latitude,
-                                      longitude, pickedFile, postDetail);
-                                  Navigator.pop(context);
-                                  _cancelEditingMode();
-                                      }
+                                    String locationName =
+                                        locationController.text;
+                                    double latitude = marker.position.latitude;
+                                    double longitude =
+                                        marker.position.longitude;
+                                    String postDetail =
+                                        postDetailController.text;
+                                    _addMarkerWithPost(locationName, latitude,
+                                        longitude, pickedFile, postDetail);
+                                    Navigator.pop(context);
+                                    _cancelEditingMode();
+                                  }
                                 },
                                 style: ButtonStyle(
                                   shape: MaterialStateProperty.all<
@@ -1806,7 +1873,7 @@ class _MapScreenState extends State<MapScreen> {
                                 style: ButtonStyle(
                                   backgroundColor:
                                       MaterialStateProperty.all<Color>(
-                                          Color(0xff4D8CFE)),
+                                          const Color(0xff4D8CFE)),
                                   shape: MaterialStateProperty.all(
                                     RoundedRectangleBorder(
                                       borderRadius:
@@ -1848,7 +1915,7 @@ class _MapScreenState extends State<MapScreen> {
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(0, 0, 23, 140),
                 child: FloatingActionButton(
-                  backgroundColor: Color(0xff4D8CFE),
+                  backgroundColor: const Color(0xff4D8CFE),
                   onPressed: _goToMyLocation,
                   child: const Icon(Icons.my_location),
                 ),
