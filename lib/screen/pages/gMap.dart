@@ -277,7 +277,7 @@ class _MapScreenState extends State<MapScreen> {
             ),
             content: SizedBox(
               width: 350.0,
-              height: 455.0,
+              height: 430.0,
               child: Stack(
                 // crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -1041,7 +1041,7 @@ class _MapScreenState extends State<MapScreen> {
             ),
             content: SizedBox(
               width: 350.0,
-              height: 507.77,
+              height: 440.77,
               child: Stack(
                 // crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -1078,6 +1078,13 @@ class _MapScreenState extends State<MapScreen> {
                         const Divider(
                           thickness: 1.0,
                           color: Colors.grey,
+                        ),
+                         const SizedBox(height: 15.0),
+                        Text(
+                          pickedFile == null ? "Picture is required" : "",
+                          style: TextStyle(
+                            fontSize: pickedFile == null ? 14.0 : 14.0,
+                          ),
                         ),
                         const SizedBox(height: 15.0),
                         Container(
@@ -1140,12 +1147,15 @@ class _MapScreenState extends State<MapScreen> {
                             )
                           ],
                         ),
-                        const SizedBox(height: 13.0),
+                        
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             ElevatedButton(
                               onPressed: () {
+                                if ((_formKey.currentState?.validate() ??
+                                        false) &&
+                                    pickedFile != null) {
                                 String updatedDescription =
                                     descriptionController.text;
                                 // Perform the update operation
@@ -1161,6 +1171,7 @@ class _MapScreenState extends State<MapScreen> {
                                 Future.delayed(const Duration(seconds: 1), () {
                                   _slidePopup(post.pinId, locationName);
                                 });
+                                    }
                               },
                               style: ButtonStyle(
                                 padding: MaterialStateProperty.all<
@@ -1382,54 +1393,80 @@ class _MapScreenState extends State<MapScreen> {
                       thickness: 1.0,
                       color: Colors.grey,
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 100.0),
-                        Container(
-                          width: 290,
-                          height: 60,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: const Color.fromARGB(240, 240, 240, 240),
-                            borderRadius: BorderRadius.circular(15.0),
-                          ),
-                          child: TextFormField(
-                            controller: locationController,
-                            style: const TextStyle(
-                              fontSize: 25.0,
-                              color: Color.fromARGB(
-                                  255, 0, 0, 0), // Set the desired color
-                            ),
-                            textAlign: TextAlign.center,
-                            decoration: const InputDecoration.collapsed(
-                              hintText: 'Name this location..',
-                              hintStyle: TextStyle(
-                                fontSize: 25.0,
-                                fontStyle: FontStyle.italic,
-                                fontWeight: FontWeight.w500,
-                                color: Color.fromARGB(255, 128, 128,
-                                    128), // Set the desired hint color
+                    Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 100.0),
+                          Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              TextFormField(
+                                controller: locationController,
+                                style: const TextStyle(
+                                  fontSize: 25.0,
+                                  color: Color.fromARGB(255, 0, 0, 0),
+                                ),
+                                textAlign: TextAlign.center,
+                                decoration: InputDecoration(
+                                  helperText: '    ',
+                                  filled: true,
+                                  fillColor: Color.fromARGB(240, 240, 240, 240),
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15)),
+                                  hintText: 'Name this location..',
+                                  hintStyle: const TextStyle(
+                                    fontSize: 25.0,
+                                    fontStyle: FontStyle.italic,
+                                    fontWeight: FontWeight.w500,
+                                    color: Color.fromARGB(255, 128, 128, 128),
+                                  ),
+                                ),
+                                validator: (value) {
+                                  if (value!.isEmpty) {
+                                    return 'Please enter a location name';
+                                  }
+                                  return null;
+                                },
+                                maxLines: null,
                               ),
-                            ),
-                            maxLines: null,
+                              if (_formKey.currentState?.validate() ?? false)
+                                Positioned(
+                                  bottom: 0,
+                                  child: Container(
+                                    alignment: Alignment.center,
+                                    width: 290,
+                                    padding: const EdgeInsets.only(bottom: 8.0),
+                                    child: const Text(
+                                      'Please enter a location name',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        color: Colors.red,
+                                        fontSize: 12.0,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                            ],
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                     const SizedBox(height: 20.0),
                     Container(
                       alignment: Alignment.bottomCenter,
                       child: Padding(
-                        padding: const EdgeInsets.only(top: 85),
+                        padding: const EdgeInsets.only(top: 55),
                         child: SizedBox(
                           width: 100, // Set the desired width
                           height: 40, // Set the desired height
                           child: ElevatedButton(
                             onPressed: () {
-                              Navigator.pop(
-                                  context); // Close the current AlertDialog
-                              _showNextPopup(marker); // Show the next popup
+                              if (_formKey.currentState?.validate() ?? false) {
+                                Navigator.pop(context);
+                                _showNextPopup(marker);
+                              }
                             },
                             style: ButtonStyle(
                               shape: MaterialStateProperty.all<
@@ -1471,7 +1508,7 @@ class _MapScreenState extends State<MapScreen> {
             ),
             content: SizedBox(
               width: 350.0,
-              height: 420.0,
+              height: 430.0,
               child: Stack(
                 // crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -1487,138 +1524,135 @@ class _MapScreenState extends State<MapScreen> {
                       onPressed: _cancelCreatePin,
                     ),
                   ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.fromLTRB(0, 50, 0, 0),
-                        child: Text(
-                          'Photo & Description',
+                  Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.fromLTRB(0, 50, 0, 0),
+                          child: Text(
+                            'Photo & Description',
+                            style: TextStyle(
+                              fontSize: 15.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 5.0),
+                        const Divider(
+                          thickness: 1.0,
+                          color: Colors.grey,
+                        ),
+                        const SizedBox(height: 15.0),
+                        Text(
+                          pickedFile == null ? "Picture is required" : "",
                           style: TextStyle(
-                            fontSize: 15.0,
-                            fontWeight: FontWeight.bold,
+                            fontSize: pickedFile == null ? 14.0 : 14.0,
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 5.0),
-                      const Divider(
-                        thickness: 1.0,
-                        color: Colors.grey,
-                      ),
-                      const SizedBox(height: 15.0),
-                      Text(
-                        pickedFile == null ? "Picture is required" : "",
-                        style: TextStyle(
-                          fontSize: pickedFile == null ? 14.0 : 14.0,
-                        ),
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: const Color.fromARGB(255, 224, 244, 255),
-                          border: Border.all(
-                            color: const Color.fromARGB(255, 0, 0, 0),
-                            width: 1.0,
-                          ),
-                          borderRadius: BorderRadius.circular(15.0),
-                        ),
-                        padding: const EdgeInsets.fromLTRB(70, 25, 70, 25),
-                        child: ElevatedButton(
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all<Color>(
-                              const Color.fromARGB(255, 224, 244, 255),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: const Color.fromARGB(255, 224, 244, 255),
+                            border: Border.all(
+                              color: const Color.fromARGB(255, 0, 0, 0),
+                              width: 1.0,
                             ),
-                            elevation: MaterialStateProperty.all<double>(
-                                0), // Set elevation to 0 to remove the button's shadow
-                            shadowColor: MaterialStateProperty.all<Color>(Colors
-                                .transparent), // Set shadowColor to transparent to remove the button's shadow
+                            borderRadius: BorderRadius.circular(15.0),
                           ),
-                          onPressed: () async {
-                            await _getImageFromGallery();
-                            setState(() {});
-                          },
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              _buildImageWidget(),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 10.0),
-                      Container(
-                        width: 244,
-                        height: 67,
-                        decoration: BoxDecoration(
-                          color: const Color.fromARGB(255, 224, 244, 255),
-                          border: Border.all(
-                            color: const Color.fromARGB(255, 0, 0, 0),
-                            width: 1.0,
-                          ),
-                          borderRadius: BorderRadius.circular(15.0),
-                        ),
-                        padding: const EdgeInsets.fromLTRB(19, 10, 0, 10),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Description (require)',
-                              style: TextStyle(
-                                fontSize: 12.0,
-                                color: Color(0xFF4D8CFE),
-                                fontWeight: FontWeight.bold,
+                          padding: const EdgeInsets.fromLTRB(70, 25, 70, 25),
+                          child: ElevatedButton(
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                const Color.fromARGB(255, 224, 244, 255),
                               ),
+                              elevation: MaterialStateProperty.all<double>(
+                                  0), // Set elevation to 0 to remove the button's shadow
+                              shadowColor: MaterialStateProperty.all<Color>(Colors
+                                  .transparent), // Set shadowColor to transparent to remove the button's shadow
                             ),
-                            const SizedBox(height: 10.0),
-                            Expanded(
-                              child: TextFormField(
-                                controller: postDetailController,
-                                decoration: const InputDecoration.collapsed(
-                                  hintText: 'Tell us about this location..',
-                                  hintStyle: TextStyle(fontSize: 12.0),
-                                ),
-                                maxLines: null,
-                              ),
+                            onPressed: () async {
+                              await _getImageFromGallery();
+                              setState(() {});
+                            },
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                _buildImageWidget(),
+                              ],
                             ),
-                          ],
+                          ),
                         ),
+                        const SizedBox(height: 1.0),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 10.0),
+
+                          TextFormField(
+                            controller: postDetailController,
+                            decoration: InputDecoration(
+                              labelText: 'Description (require)',
+                              helperText: '    ',
+                              filled: true,
+                              fillColor: Color.fromARGB(255, 224, 244, 255),
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(15)),
+                              hintText: 'Tell us about this location..',
+                              hintStyle: TextStyle(fontSize: 12.0),
+                            ),
+                            maxLines: null,
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return 'Description is required.';
+                              }
+                              return null;
+                            },
+                          )
+                        ],
                       ),
-                      const SizedBox(height: 10.0),
-                      Container(
-                        alignment: Alignment.bottomCenter,
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 10),
-                          child: SizedBox(
-                            width: 100, // Set the desired width
-                            height: 40, // Set the desired height
-                            child: ElevatedButton(
-                              onPressed: () {
-                                String locationName = locationController.text;
-                                double latitude = marker.position.latitude;
-                                double longitude = marker.position.longitude;
-                                String postDetail = postDetailController.text;
-                                _addMarkerWithPost(locationName, latitude,
-                                    longitude, pickedFile, postDetail);
-                                Navigator.pop(context);
-                                _cancelEditingMode();
-                              },
-                              style: ButtonStyle(
-                                shape: MaterialStateProperty.all<
-                                    RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.circular(99999.0),
+                        const SizedBox(height: 5.0),
+                        Container(
+                          alignment: Alignment.bottomCenter,
+                          child: Padding(
+                           padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                            child: SizedBox(
+                              width: 100, // Set the desired width
+                              height: 40, // Set the desired height
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  if ((_formKey.currentState?.validate() ??
+                                          false) &&
+                                      pickedFile != null) {
+                                  String locationName = locationController.text;
+                                  double latitude = marker.position.latitude;
+                                  double longitude = marker.position.longitude;
+                                  String postDetail = postDetailController.text;
+                                  _addMarkerWithPost(locationName, latitude,
+                                      longitude, pickedFile, postDetail);
+                                  Navigator.pop(context);
+                                  _cancelEditingMode();
+                                      }
+                                },
+                                style: ButtonStyle(
+                                  shape: MaterialStateProperty.all<
+                                      RoundedRectangleBorder>(
+                                    RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(99999.0),
+                                    ),
                                   ),
                                 ),
-                              ),
-                              child: const Text(
-                                'Create Pin',
-                                style: TextStyle(fontSize: 13),
+                                child: const Text(
+                                  'Create Pin',
+                                  style: TextStyle(fontSize: 13),
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -1746,7 +1780,7 @@ class _MapScreenState extends State<MapScreen> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 0, 10, 30),
+                            padding: const EdgeInsets.fromLTRB(50, 0, 10, 55),
                             child: SizedBox(
                               height: 44.0,
                               width: 44.0,
@@ -1764,7 +1798,7 @@ class _MapScreenState extends State<MapScreen> {
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 0, 13, 25),
+                            padding: const EdgeInsets.fromLTRB(0, 0, 13, 56),
                             child: SizedBox(
                               width: 118,
                               height: 60,
@@ -1795,7 +1829,7 @@ class _MapScreenState extends State<MapScreen> {
                         ],
                       )
                     : Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 0, 13, 25),
+                        padding: const EdgeInsets.fromLTRB(0, 0, 13, 60),
                         child: SizedBox(
                           width: 57.0,
                           height: 58.0,
@@ -1812,7 +1846,7 @@ class _MapScreenState extends State<MapScreen> {
             Align(
               alignment: Alignment.bottomRight,
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(0, 0, 25, 105),
+                padding: const EdgeInsets.fromLTRB(0, 0, 23, 140),
                 child: FloatingActionButton(
                   backgroundColor: Color(0xff4D8CFE),
                   onPressed: _goToMyLocation,
