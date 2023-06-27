@@ -646,6 +646,12 @@ class _MapScreenState extends State<MapScreen> {
               );
               _markers.add(marker);
             });
+            Future.delayed(
+              const Duration(seconds: 1),
+              {
+                _slidePopup(pinId, locationName),
+              } as FutureOr Function()?,
+            );
           } else {
             // Error creating post
             print('Error creating post');
