@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
@@ -166,7 +168,7 @@ class _UserProfileState extends State<UserProfile> {
 
     try {
       final response = await http.put(url, headers: headers, body: body);
-
+      var jsonResponse = jsonDecode(response.body);
       if (response.statusCode == 200) {
         setState(() {
           _userData?.then((data) {
@@ -176,11 +178,28 @@ class _UserProfileState extends State<UserProfile> {
           });
         });
       } else {
-        throw Exception(
-            'Failed to update username. Status code: ${response.statusCode}');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              jsonResponse[
+                  'message'], // Display the error message received from the server
+              style: const TextStyle(color: Colors.red),
+            ),
+            duration: const Duration(seconds: 3),
+          ),
+        );
       }
     } catch (error) {
-      throw Exception('Error updating username: $error');
+      final errorMessage = error.toString();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            errorMessage, // Display the error message received from the server
+            style: const TextStyle(color: Colors.red),
+          ),
+          duration: const Duration(seconds: 3),
+        ),
+      );
     }
   }
 
@@ -289,16 +308,7 @@ class _UserProfileState extends State<UserProfile> {
         }
       }
     } catch (error) {
-      final errorMessage = error.toString();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            errorMessage, // Display the error message received from the server
-            style: const TextStyle(color: Colors.red),
-          ),
-          duration: const Duration(seconds: 3),
-        ),
-      );
+      print('Error: $error');
     }
   }
 
