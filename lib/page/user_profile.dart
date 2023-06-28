@@ -289,7 +289,16 @@ class _UserProfileState extends State<UserProfile> {
         }
       }
     } catch (error) {
-      print('Error: $error');
+      final errorMessage = error.toString();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            errorMessage, // Display the error message received from the server
+            style: const TextStyle(color: Colors.red),
+          ),
+          duration: const Duration(seconds: 3),
+        ),
+      );
     }
   }
 
@@ -554,7 +563,7 @@ class _UserProfileState extends State<UserProfile> {
                                     decoration: BoxDecoration(
                                       color: const Color(0xFFE0F4FF),
                                       border: Border.all(
-                                        color: const Color(0xFF76767676),
+                                        color: const Color(0xff76767676),
                                         width: 1,
                                       ),
                                       borderRadius: BorderRadius.circular(15.0),
