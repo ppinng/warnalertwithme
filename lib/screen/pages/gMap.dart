@@ -857,7 +857,7 @@ class _MapScreenState extends State<MapScreen> {
                             child: Text(
                               locationName,
                               style: const TextStyle(
-                                color: Color.fromARGB(255, 33, 150, 243),
+                                color: Color(0xFF4D8CFE),
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -875,8 +875,9 @@ class _MapScreenState extends State<MapScreen> {
                       bottom: 25, // Adjust the bottom padding as needed
                     ),
                     child: SizedBox(
-                      height: 500,
+                      height: 400,
                       child: ListView.builder(
+                        shrinkWrap: true,
                         itemCount: posts.length,
                         itemBuilder: (BuildContext context, int index) {
                           // Check if the current post has the same pin_id
@@ -901,7 +902,7 @@ class _MapScreenState extends State<MapScreen> {
                                     color: const Color.fromARGB(
                                         255, 224, 244, 255),
                                     border: Border.all(
-                                      color: const Color.fromARGB(255, 0, 0, 0),
+                                      color: const Color(0xFF767676),
                                       width: 1.0,
                                     ),
                                     borderRadius: BorderRadius.circular(15.0),
@@ -950,25 +951,16 @@ class _MapScreenState extends State<MapScreen> {
                                         ),
                                       ),
                                       Align(
-                                        alignment: Alignment.center,
+                                        alignment: Alignment.topLeft,
                                         child: Padding(
                                           padding: const EdgeInsets.fromLTRB(
-                                              145, 0, 0, 20),
+                                              145, 20, 0, 20),
                                           child: Text(
                                             posts[index]
                                                 .detail, // Use post detail
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              color: const Color.fromARGB(
-                                                  147, 118, 118, 229),
-                                              shadows: [
-                                                Shadow(
-                                                  color: Colors.black
-                                                      .withOpacity(0.2),
-                                                  blurRadius: 5,
-                                                  offset: const Offset(0, 3),
-                                                ),
-                                              ],
+                                            style: const TextStyle(
+                                              fontSize: 15,
+                                              color: Color(0xFF767676),
                                             ),
                                           ),
                                         ),
@@ -1051,8 +1043,7 @@ class _MapScreenState extends State<MapScreen> {
                                               posts[index].timeAgo,
                                               style: const TextStyle(
                                                 fontSize: 10,
-                                                color: Color.fromARGB(
-                                                    147, 118, 118, 229),
+                                                color: Color(0xFF767676),
                                               ),
                                             ),
                                           ),

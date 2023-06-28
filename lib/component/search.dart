@@ -68,197 +68,204 @@ class _SearchBarForMapState extends State<SearchBarForMap> {
       builder: (BuildContext context) {
         return Container(
           height: MediaQuery.of(context).size.height * 0.6,
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: ListView(
-            // physics: NeverScrollableScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(4.0),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(Icons.keyboard_arrow_down),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  Container(
-                    alignment: Alignment.center,
-                    child: Text(
-                      result['location_name'],
-                      style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Color.fromARGB(255, 30, 108, 252)),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height,
-                    child: ListView.builder(
-                      physics: AlwaysScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: result['posts'].length,
-                      itemBuilder: (context, index) {
-                        var post = result['posts'][index];
-                        var timeAgo = '';
-
-                        if (post['time_ago'].containsKey('days') &&
-                            post['time_ago']['days'] != null &&
-                            post['time_ago']['days'] >= 1) {
-                          var days = post['time_ago']['days'];
-                          var hours = post['time_ago']['hours'] ?? 0;
-                          var minutes = post['time_ago']['minutes'] ?? 0;
-                          timeAgo = _formatDuration(Duration(
-                              days: days, hours: hours, minutes: minutes));
-                          // Display timeAgo with days, hours, and minutes
-                        } else if (post['time_ago'].containsKey('hours') &&
-                            post['time_ago']['hours'] != null &&
-                            post['time_ago']['hours'] >= 1) {
-                          var hours = post['time_ago']['hours'];
-                          var minutes = post['time_ago']['minutes'] ?? 0;
-                          timeAgo = _formatDuration(
-                              Duration(hours: hours, minutes: minutes));
-                          // Display timeAgo with hours and minutes
-                        } else {
-                          var minutes = post['time_ago']['minutes'] ?? 0;
-                          timeAgo = _formatDuration(Duration(minutes: minutes));
-                          // Display timeAgo with minutes
-                        }
-
-                        return Padding(
-                          padding: const EdgeInsets.all(10),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const SizedBox(height: 16),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).pop();
+                          },
                           child: Container(
-                            width: 100,
-                            height: 125,
-                            decoration: BoxDecoration(
-                              color: const Color.fromARGB(255, 224, 244, 255),
-                              border: Border.all(
-                                color: Color(0xFF76767676),
-                                width: 1,
-                              ),
-                              borderRadius: BorderRadius.circular(15.0),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.5),
-                                  spreadRadius: 2,
-                                  blurRadius: 5,
-                                  offset: const Offset(0,
-                                      3), // changes the position of the shadow
-                                ),
-                              ],
+                            padding: const EdgeInsets.all(4.0),
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
                             ),
-                            child: Stack(
-                              children: [
-                                Positioned(
-                                  top: 17,
-                                  left: 15,
-                                  child: SizedBox(
-                                    width: 120,
-                                    height: 91,
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(15.0),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.grey.withOpacity(0.5),
-                                            spreadRadius: 2,
-                                            blurRadius: 5,
-                                            offset: const Offset(0, 3),
+                            child: const FaIcon(FontAwesomeIcons.angleDown),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Container(
+                      alignment: Alignment.center,
+                      child: Text(
+                        result['location_name'],
+                        style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF4D8CFE)),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      height: 350,
+                      child: ListView.builder(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: result['posts'].length,
+                        itemBuilder: (context, index) {
+                          var post = result['posts'][index];
+                          var timeAgo = '';
+
+                          if (post['time_ago'].containsKey('days') &&
+                              post['time_ago']['days'] != null &&
+                              post['time_ago']['days'] >= 1) {
+                            var days = post['time_ago']['days'];
+                            var hours = post['time_ago']['hours'] ?? 0;
+                            var minutes = post['time_ago']['minutes'] ?? 0;
+                            timeAgo = _formatDuration(Duration(
+                                days: days, hours: hours, minutes: minutes));
+                            // Display timeAgo with days, hours, and minutes
+                          } else if (post['time_ago'].containsKey('hours') &&
+                              post['time_ago']['hours'] != null &&
+                              post['time_ago']['hours'] >= 1) {
+                            var hours = post['time_ago']['hours'];
+                            var minutes = post['time_ago']['minutes'] ?? 0;
+                            timeAgo = _formatDuration(
+                                Duration(hours: hours, minutes: minutes));
+                            // Display timeAgo with hours and minutes
+                          } else {
+                            var minutes = post['time_ago']['minutes'] ?? 0;
+                            timeAgo =
+                                _formatDuration(Duration(minutes: minutes));
+                            // Display timeAgo with minutes
+                          }
+
+                          return Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: Container(
+                              width: 100,
+                              height: 125,
+                              decoration: BoxDecoration(
+                                color: const Color.fromARGB(255, 224, 244, 255),
+                                border: Border.all(
+                                  color: const Color(0xFF767676),
+                                  width: 1,
+                                ),
+                                borderRadius: BorderRadius.circular(15.0),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    spreadRadius: 2,
+                                    blurRadius: 5,
+                                    offset: const Offset(0,
+                                        3), // changes the position of the shadow
+                                  ),
+                                ],
+                              ),
+                              child: Stack(
+                                children: [
+                                  Positioned(
+                                    top: 17,
+                                    left: 15,
+                                    child: SizedBox(
+                                      width: 120,
+                                      height: 91,
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(15.0),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color:
+                                                  Colors.grey.withOpacity(0.5),
+                                              spreadRadius: 2,
+                                              blurRadius: 5,
+                                              offset: const Offset(0, 3),
+                                            ),
+                                          ],
+                                        ),
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(15.0),
+                                          child: Image.network(
+                                            post[
+                                                'post_image'], // Use post image URL
+                                            fit: BoxFit.cover,
                                           ),
-                                        ],
-                                      ),
-                                      child: ClipRRect(
-                                        borderRadius:
-                                            BorderRadius.circular(15.0),
-                                        child: Image.network(
-                                          post[
-                                              'post_image'], // Use post image URL
-                                          fit: BoxFit.cover,
                                         ),
                                       ),
                                     ),
                                   ),
-                                ),
-                                Align(
-                                  alignment: Alignment.topLeft,
-                                  child: Padding(
-                                    padding: const EdgeInsets.fromLTRB(
-                                        145, 20, 0, 20),
-                                    child: Text(
-                                      post['post_detail'], // Use post detail
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        color: Color(0xFF767676),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Positioned(
-                                  top: 90,
-                                  right: 4,
-                                  child: SizedBox(
-                                    width: 33,
-                                    height: 30,
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.grey.withOpacity(0.5),
-                                            spreadRadius: 2,
-                                            blurRadius: 5,
-                                            offset: const Offset(0, 3),
-                                          ),
-                                        ],
-                                      ),
-                                      child: ClipOval(
-                                        child: CircleAvatar(
-                                          radius: 15,
-                                          backgroundImage: NetworkImage(
-                                              post['profile_image']),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Align(
-                                  alignment: Alignment.bottomRight,
-                                  child: Padding(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(0, 0, 41, 4),
-                                    child: Container(
-                                      decoration: BoxDecoration(),
+                                  Align(
+                                    alignment: Alignment.topLeft,
+                                    child: Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                          145, 20, 0, 20),
                                       child: Text(
-                                        timeAgo, // Use post time
+                                        post['post_detail'], // Use post detail
                                         style: const TextStyle(
-                                          fontSize: 10,
+                                          fontSize: 15,
                                           color: Color(0xFF767676),
                                         ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                  Positioned(
+                                    top: 90,
+                                    right: 4,
+                                    child: SizedBox(
+                                      width: 33,
+                                      height: 30,
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color:
+                                                  Colors.grey.withOpacity(0.5),
+                                              spreadRadius: 2,
+                                              blurRadius: 5,
+                                              offset: const Offset(0, 3),
+                                            ),
+                                          ],
+                                        ),
+                                        child: ClipOval(
+                                          child: CircleAvatar(
+                                            radius: 15,
+                                            backgroundImage: NetworkImage(
+                                                post['profile_image']),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Align(
+                                    alignment: Alignment.bottomRight,
+                                    child: Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                          0, 0, 41, 4),
+                                      child: Container(
+                                        decoration: const BoxDecoration(),
+                                        child: Text(
+                                          timeAgo, // Use post time
+                                          style: const TextStyle(
+                                            fontSize: 10,
+                                            color: Color(0xFF767676),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
@@ -322,81 +329,84 @@ class _SearchBarForMapState extends State<SearchBarForMap> {
                                 Navigator.of(context).pop();
                               },
                               child: Container(
-                                padding: const EdgeInsets.all(4.0),
-                                decoration: BoxDecoration(
+                                padding: const EdgeInsets.fromLTRB(4, 20, 4, 4),
+                                decoration: const BoxDecoration(
                                   shape: BoxShape.circle,
                                 ),
-                                child: const Icon(Icons.keyboard_arrow_down),
+                                child: const FaIcon(FontAwesomeIcons.angleDown),
                               ),
                             ),
                           ],
                         ),
                         SizedBox(
-                          height: MediaQuery.of(context).size.height,
-                          child: ListView.builder(
-                            itemCount: _searchResults.length,
-                            itemBuilder: (context, index) {
-                              var result = _searchResults[index];
-                              return GestureDetector(
-                                onTap: () {
-                                  _showPostDetails(context, result);
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.all(10),
-                                  child: Container(
-                                    width: 100,
-                                    height: 125,
-                                    decoration: BoxDecoration(
-                                      color: const Color.fromARGB(
-                                          255, 224, 244, 255),
-                                      border: Border.all(
-                                        color: Color(0xFF76767676),
-                                        width: 2,
-                                      ),
-                                      borderRadius: BorderRadius.circular(15.0),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.grey.withOpacity(0.5),
-                                          spreadRadius: 2,
-                                          blurRadius: 5,
-                                          offset: const Offset(0,
-                                              3), // changes the position of the shadow
+                          height: 500,
+                          child: SizedBox(
+                            height: MediaQuery.of(context).size.height,
+                            child: ListView.builder(
+                              itemCount: _searchResults.length,
+                              itemBuilder: (context, index) {
+                                var result = _searchResults[index];
+                                return GestureDetector(
+                                  onTap: () {
+                                    _showPostDetails(context, result);
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(10),
+                                    child: Container(
+                                      width: 100,
+                                      height: 125,
+                                      decoration: BoxDecoration(
+                                        color: const Color.fromARGB(
+                                            255, 224, 244, 255),
+                                        border: Border.all(
+                                          color: const Color(0xFF767676),
+                                          width: 2,
                                         ),
-                                      ],
-                                    ),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              top: 30, left: 20),
-                                          child: Text(
-                                            result['location_name'],
-                                            style: TextStyle(
-                                                fontSize: 22,
-                                                fontWeight: FontWeight.bold,
-                                                color: Color.fromARGB(
-                                                    255, 30, 108, 252)),
+                                        borderRadius:
+                                            BorderRadius.circular(15.0),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.grey.withOpacity(0.5),
+                                            spreadRadius: 2,
+                                            blurRadius: 5,
+                                            offset: const Offset(0,
+                                                3), // changes the position of the shadow
                                           ),
-                                        ),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 20),
-                                          child: Text(
-                                              'Number of posts: ${result['post_count']}',
-                                              style: TextStyle(
-                                                color: Color(0xFF767676),
-                                              )),
-                                        )
-                                      ],
+                                        ],
+                                      ),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                top: 30, left: 20),
+                                            child: Text(
+                                              result['location_name'],
+                                              style: const TextStyle(
+                                                  fontSize: 22,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Color(0xFF4D8CFE)),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding:
+                                                const EdgeInsets.only(left: 20),
+                                            child: Text(
+                                                'Number of posts: ${result['post_count']}',
+                                                style: const TextStyle(
+                                                  color: Color(0xFF767676),
+                                                )),
+                                          )
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                              );
-                            },
+                                );
+                              },
+                            ),
                           ),
                         ),
                       ],
