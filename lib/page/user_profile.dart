@@ -21,7 +21,7 @@ class UserProfile extends StatefulWidget {
 class _UserProfileState extends State<UserProfile> {
   Future<Map<String, dynamic>>? _userData;
   Map<String, dynamic>? userData;
-  final TextEditingController _usernameController = TextEditingController();
+  TextEditingController _usernameController = TextEditingController();
   @override
   void initState() {
     super.initState();
@@ -40,6 +40,12 @@ class _UserProfileState extends State<UserProfile> {
         setState(() {
           _userData = Future.value(data);
         });
+        _userData?.then((data) {
+          setState(() {
+            _usernameController = data['user']['username'];
+          });
+        });
+        print(_usernameController.text);
       } else {
         throw Exception('Invalid user data format');
       }
@@ -54,26 +60,93 @@ class _UserProfileState extends State<UserProfile> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: const Color(0xFFE0F4FF),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30),
+          ),
           title: const Text('Edit Username'),
           content: TextField(
             controller: _usernameController,
             decoration: const InputDecoration(hintText: 'Enter new username'),
           ),
-          actions: [
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text('Update'),
-              onPressed: () {
-                _updateUsername(_usernameController.text);
-                Navigator.of(context).pop();
-              },
+          actions: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Close the dialog
+                  },
+                  style: ButtonStyle(
+                    padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                      const EdgeInsets.symmetric(
+                          vertical: 12.0,
+                          horizontal: 20.0), // Adjust the padding
+                    ),
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                      const Color(0xffE36571),
+                    ),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(45.0),
+                      ),
+                    ),
+                  ),
+                  child: const Text(
+                    'Cancel',
+                    style:
+                        TextStyle(fontSize: 13.0), // Set the desired font size
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    _updateUsername(_usernameController.text);
+                    Navigator.of(context).pop();
+                  },
+                  style: ButtonStyle(
+                    padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                      const EdgeInsets.symmetric(
+                          vertical: 12.0,
+                          horizontal: 20.0), // Adjust the padding
+                    ),
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                      const Color(0xff4D8CFE),
+                    ),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(45.0),
+                      ),
+                    ),
+                  ),
+                  child: const Text(
+                    'Update',
+                    style:
+                        TextStyle(fontSize: 13.0), // Set the desired font size
+                  ),
+                ),
+              ],
             ),
           ],
+          // title: const Text('Edit Username'),
+          // content: TextField(
+          //   controller: _usernameController,
+          //   decoration: const InputDecoration(hintText: 'Enter new username'),
+          // ),
+          // actions: [
+          //   TextButton(
+          //     child: const Text('Cancel'),
+          //     onPressed: () {
+          //       Navigator.of(context).pop();
+          //     },
+          //   ),
+          //   TextButton(
+          //     child: const Text('Update'),
+          //     onPressed: () {
+          //       _updateUsername(_usernameController.text);
+          //       Navigator.of(context).pop();
+          //     },
+          //   ),
+          // ],
         );
       },
     );
@@ -284,15 +357,16 @@ class _UserProfileState extends State<UserProfile> {
                                   36, // Adjust the height here (decrease the value)
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                  color: Colors.black,
-                                  width: 1,
+                                  color: const Color(0xff767676),
+                                  width: 2,
                                 ),
                                 shape: BoxShape.circle,
                                 color: Colors.white,
                               ),
                               child: IconButton(
-                                iconSize: 18,
-                                icon: const Icon(Icons.edit),
+                                iconSize: 17,
+                                icon:
+                                    const FaIcon(FontAwesomeIcons.penToSquare),
                                 onPressed: () {
                                   showDialog(
                                     context: context,
@@ -432,7 +506,7 @@ class _UserProfileState extends State<UserProfile> {
                               overflow: TextOverflow.ellipsis,
                             ),
                             IconButton(
-                              icon: const Icon(Icons.edit),
+                              icon: const Icon(Icons.border_color),
                               onPressed: _showEditUsernameModal,
                             ),
                           ],

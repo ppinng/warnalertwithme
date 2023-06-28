@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -94,6 +95,14 @@ class _MapScreenState extends State<MapScreen> {
     myToken = token;
   }
 
+  late BitmapDescriptor customIcon;
+
+  Future<void> loadCustomIcon() async {
+    final ByteData imageData = await rootBundle.load('assets/images/pin.png');
+    final Uint8List iconData = imageData.buffer.asUint8List();
+    customIcon = BitmapDescriptor.fromBytes(iconData);
+  }
+
   void getMarkerData() async {
     const url = 'http://10.0.2.2:3000/api/pins';
 
@@ -116,12 +125,14 @@ class _MapScreenState extends State<MapScreen> {
         final specifyId = pin['pin_id'].toString();
 
         final markerId = MarkerId(specifyId);
+        await loadCustomIcon();
         final marker = Marker(
           markerId: markerId,
           position: LatLng(
             specify['latitude'],
             specify['longitude'],
           ),
+          icon: customIcon,
           infoWindow: InfoWindow(
             snippet: _editingMode ? 'Click to Delete' : null,
             title: specify['address'],
@@ -681,16 +692,16 @@ class _MapScreenState extends State<MapScreen> {
             // Post created successfully
             print('Post created successfully');
             // Update the markers list with the new marker
-            setState(() {
-              final marker = Marker(
-                markerId: MarkerId(DateTime.now().toString()),
-                position: LatLng(latitude, longitude),
-                infoWindow: InfoWindow(
-                  title: locationName,
-                ),
-              );
-              _markers.add(marker);
-            });
+            // setState(() {
+            //   final marker = Marker(
+            //     markerId: MarkerId(DateTime.now().toString()),
+            //     position: LatLng(latitude, longitude),
+            //     infoWindow: InfoWindow(
+            //       title: locationName,
+            //     ),
+            //   );
+            //   _markers.add(marker);
+            // });
             Future.delayed(
               const Duration(seconds: 1),
               {

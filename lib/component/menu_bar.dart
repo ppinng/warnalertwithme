@@ -86,15 +86,11 @@ class _DrawerBarState extends State<DrawerBar> {
       child: ListView(
         children: [
           if (profileImage != null)
-            CircleAvatar(
-              backgroundImage: NetworkImage(profileImage!),
-              radius: 40,
-              backgroundColor: Colors.transparent,
-              child: ClipOval(
-                child: Image.network(
-                  profileImage!,
-                  fit: BoxFit.cover,
-                ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 80),
+              child: CircleAvatar(
+                maxRadius: 70,
+                backgroundImage: NetworkImage(profileImage ?? ''),
               ),
             ),
           if (username != null) // Check if username is available
@@ -104,14 +100,20 @@ class _DrawerBarState extends State<DrawerBar> {
                 username!,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
-                  fontSize: 16,
+                  color: Color(0xff4D8CFE),
+                  fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
           ListTile(
             leading: const FaIcon(FontAwesomeIcons.house),
-            title: const Text('Home'),
+            title: const Text(
+              'Home',
+              style: TextStyle(
+                fontSize: 16,
+              ),
+            ),
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
@@ -122,7 +124,12 @@ class _DrawerBarState extends State<DrawerBar> {
           ),
           ListTile(
             leading: const FaIcon(FontAwesomeIcons.user),
-            title: const Text('Profile'),
+            title: const Text(
+              'Profile',
+              style: TextStyle(
+                fontSize: 16,
+              ),
+            ),
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
@@ -137,7 +144,12 @@ class _DrawerBarState extends State<DrawerBar> {
           Builder(
             builder: (context) => ListTile(
               leading: const FaIcon(FontAwesomeIcons.arrowRightFromBracket),
-              title: const Text('Log out'),
+              title: const Text(
+                'Log out',
+                style: TextStyle(
+                  fontSize: 16,
+                ),
+              ),
               onTap: () {
                 logoutUser(context);
               },
