@@ -428,7 +428,8 @@ class _MapScreenState extends State<MapScreen> {
                                 hintText: 'Tell us about this location..',
                                 hintStyle: const TextStyle(fontSize: 12.0),
                               ),
-                              maxLines: null,
+                               maxLines: 1,
+                              maxLength: 100,
                               validator: (value) {
                                 if (value!.isEmpty) {
                                   return 'Description is required.';
@@ -1065,7 +1066,7 @@ class _MapScreenState extends State<MapScreen> {
               ),
             ),
             Positioned(
-              top: 60,
+              top: 25,
               right: 23,
               child: SizedBox(
                 width: 39,
@@ -1202,7 +1203,8 @@ class _MapScreenState extends State<MapScreen> {
                                 hintText: 'Tell us about this location..',
                                 hintStyle: const TextStyle(fontSize: 12.0),
                               ),
-                              maxLines: null,
+                              maxLines: 1,
+                              maxLength: 100,
                               validator: (value) {
                                 if (value!.isEmpty) {
                                   return 'Description is required.';
@@ -1467,7 +1469,8 @@ class _MapScreenState extends State<MapScreen> {
                           Stack(
                             alignment: Alignment.center,
                             children: [
-                              TextFormField(
+                              Flexible(
+                              child: TextFormField(
                                 controller: locationController,
                                 style: const TextStyle(
                                   fontSize: 25.0,
@@ -1480,7 +1483,8 @@ class _MapScreenState extends State<MapScreen> {
                                   fillColor:
                                       const Color.fromARGB(240, 240, 240, 240),
                                   border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(15)),
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
                                   hintText: 'Name this location..',
                                   hintStyle: const TextStyle(
                                     fontSize: 25.0,
@@ -1495,8 +1499,10 @@ class _MapScreenState extends State<MapScreen> {
                                   }
                                   return null;
                                 },
-                                maxLines: null,
+                                maxLines: 1,
+                                maxLength: 25,
                               ),
+                            ),
                               if (_formKey.currentState?.validate() ?? false)
                                 Positioned(
                                   bottom: 0,
@@ -1667,7 +1673,8 @@ class _MapScreenState extends State<MapScreen> {
                                 hintText: 'Tell us about this location..',
                                 hintStyle: const TextStyle(fontSize: 12.0),
                               ),
-                              maxLines: null,
+                              maxLines: 1,
+                              maxLength: 100,
                               validator: (value) {
                                 if (value!.isEmpty) {
                                   return 'Description is required.';
